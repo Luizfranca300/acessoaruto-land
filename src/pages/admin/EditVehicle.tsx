@@ -28,6 +28,30 @@ type VehicleForm = {
   is_sold: boolean;
 };
 
+// Características pré-definidas mais comuns em veículos
+const COMMON_FEATURES = [
+  "Ar-condicionado",
+  "Direção elétrica",
+  "Direção hidráulica",
+  "Vidros elétricos",
+  "Travas elétricas",
+  "Alarme",
+  "Som",
+  "Multimídia",
+  "Câmera de ré",
+  "Sensor de estacionamento",
+  "Airbag",
+  "ABS",
+  "Controle de tração",
+  "Piloto automático",
+  "Bancos em couro",
+  "Rodas de liga leve",
+  "Faróis de neblina",
+  "Teto solar",
+  "Computador de bordo",
+  "Bluetooth",
+];
+
 export default function EditVehicle() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -422,42 +446,110 @@ export default function EditVehicle() {
             <h2 className="text-xl font-bold text-gray-900 mb-6">
               Características
             </h2>
-            <div className="flex gap-2 mb-4">
-              <input
-                type="text"
-                value={currentFeature}
-                onChange={(e) => setCurrentFeature(e.target.value)}
-                className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
-                placeholder="Ex: Ar condicionado, Direção hidráulica..."
-                onKeyPress={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), addFeature())
-                }
-              />
-              <button
-                type="button"
-                onClick={addFeature}
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
+
+            {/* Características Pré-definidas */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">
+                Características Comuns
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {COMMON_FEATURES.map((feature) => {
+                  const isSelected = formData.features.includes(feature);
+                  return (
+                    <label
+                      key={feature}
+                      className="flex items-center cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({
+                              ...formData,
+                              features: [...formData.features, feature],
+                            });
+                          } else {
+                            setFormData({
+                              ...formData,
+                              features: formData.features.filter(
+                                (f) => f !== feature
+                              ),
+                            });
+                          }
+                        }}
+                        className="mr-2 rounded focus:ring-red-600 text-red-600"
+                      />
+                      <span className="text-sm text-gray-700 group-hover:text-gray-900">
+                        {feature}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.features.map((feature, index) => (
-                <span
-                  key={index}
-                  className="bg-red-50 text-red-700 border border-red-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+
+            {/* Característica Personalizada */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">
+                Adicionar Característica Personalizada
+              </h3>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={currentFeature}
+                  onChange={(e) => setCurrentFeature(e.target.value)}
+                  className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                  placeholder="Ex: Bancos aquecidos, GPS integrado..."
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addFeature())
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={addFeature}
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md"
                 >
-                  {feature}
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
             </div>
+
+            {/* Características Selecionadas */}
+            {formData.features.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">
+                  Características Selecionadas ({formData.features.length})
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {formData.features.map((feature, index) => {
+                    const isCommon = COMMON_FEATURES.includes(feature);
+                    return (
+                      <span
+                        key={index}
+                        className="bg-red-50 text-red-700 border border-red-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                      >
+                        {feature}
+                        {!isCommon && (
+                          <button
+                            type="button"
+                            onClick={() => removeFeature(index)}
+                            className="text-red-400 hover:text-red-600"
+                            title="Remover característica personalizada"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </span>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  💡 Dica: Características comuns podem ser desmarcadas acima.
+                  Personalizadas podem ser removidas aqui.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Upload de Imagens */}
