@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Plus, Edit3, Trash2, Eye } from "lucide-react";
-import { getVehicles, Vehicle } from "../../lib/api";
+import { ArrowLeft, Plus, Edit3, Trash2, Eye, X } from "lucide-react";
+import { getVehicles, deleteVehicle, Vehicle } from "../../lib/api";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 
 export default function VehiclesAdmin() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadVehicles();
@@ -20,6 +22,23 @@ export default function VehiclesAdmin() {
       console.error("Erro ao carregar veículos:", error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!vehicleToDelete) return;
+
+    setDeleting(true);
+    try {
+      await deleteVehicle(vehicleToDelete.id);
+      setVehicles(vehicles.filter((v) => v.id !== vehicleToDelete.id));
+      setVehicleToDelete(null);
+      alert("Veículo deletado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar veículo:", error);
+      alert("Erro ao deletar veículo. Tente novamente.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -193,9 +212,7 @@ export default function VehiclesAdmin() {
                             <Edit3 className="w-4 h-4" />
                           </Link>
                           <button
-                            onClick={() =>
-                              alert("Função de deletar será implementada")
-                            }
+                            onClick={() => setVehicleToDelete(vehicle)}
                             className="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
                             title="Deletar"
                           >
@@ -211,6 +228,93 @@ export default function VehiclesAdmin() {
           </div>
         )}
       </main>
+
+      {/* Modal de Confirmação de Exclusão */}
+      {vehicleToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            {/* Header do Modal */}
+            <div className="bg-gradient-to-r from-red-600 to-red-700 p-6 rounded-t-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                  <Trash2 className="w-6 h-6" />
+                  Confirmar Exclusão
+                </h3>
+                <button
+                  onClick={() => setVehicleToDelete(null)}
+                  className="text-white hover:text-red-100 transition-colors"
+                  disabled={deleting}
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Conteúdo do Modal */}
+            <div className="p-6">
+              <p className="text-gray-700 mb-4">
+                Tem certeza que deseja deletar este veículo?
+              </p>
+
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="flex items-center gap-3">
+                  {vehicleToDelete.images.length > 0 && (
+                    <img
+                      src={vehicleToDelete.images[0]}
+                      alt={`${vehicleToDelete.brands?.name} ${vehicleToDelete.model}`}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                  )}
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {vehicleToDelete.brands?.name} {vehicleToDelete.model}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      Ano {vehicleToDelete.year} • {vehicleToDelete.color}
+                    </p>
+                    <p className="text-red-600 font-semibold text-sm">
+                      R${" "}
+                      {Number(vehicleToDelete.price).toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <strong>⚠️ Atenção:</strong> Esta ação não pode ser desfeita.
+                Todas as imagens do veículo também serão removidas do servidor.
+              </p>
+
+              {/* Botões de Ação */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setVehicleToDelete(null)}
+                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  disabled={deleting}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {deleting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Deletando...
+                    </span>
+                  ) : (
+                    "Sim, Deletar"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

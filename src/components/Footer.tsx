@@ -8,6 +8,7 @@ import {
   Lock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { isAuthenticated } from "../lib/auth";
 
 export default function Footer() {
   const companyName =
@@ -130,7 +131,7 @@ export default function Footer() {
             CNPJ: {companyCNPJ}
             <span className="mx-2">•</span>
             <Link
-              to="/admin/login"
+              to={isAuthenticated() ? "/admin/dashboard" : "/admin/login"}
               className="inline-flex items-center gap-1 text-gray-600 hover:text-gray-400 transition-colors text-xs"
               title="Painel Administrativo"
             >

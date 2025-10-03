@@ -11,6 +11,7 @@ import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import VehiclesAdmin from "./pages/admin/VehiclesAdmin";
 import NewVehicle from "./pages/admin/NewVehicle";
+import EditVehicle from "./pages/admin/EditVehicle";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/vehicles" element={<VehiclesAdmin />} />
         <Route path="/admin/vehicles/new" element={<NewVehicle />} />
+        <Route path="/admin/vehicles/:id/edit" element={<EditVehicle />} />
 
         {/* Public Routes - Com Header/Footer */}
         <Route

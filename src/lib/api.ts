@@ -158,17 +158,25 @@ function getToken(): string | null {
 
 export async function updateVehicle(
   id: string,
-  vehicle: Partial<Vehicle>
+  vehicle: Partial<Omit<Vehicle, "id" | "created_at" | "updated_at" | "brands">>
 ): Promise<Vehicle> {
+  const token = getToken();
   return fetchAPI<Vehicle>(`/vehicles/${id}`, {
     method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(vehicle),
   });
 }
 
 export async function deleteVehicle(id: string): Promise<void> {
+  const token = getToken();
   return fetchAPI<void>(`/vehicles/${id}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 }
 
