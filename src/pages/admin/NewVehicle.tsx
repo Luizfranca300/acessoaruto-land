@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, X, Plus } from "lucide-react";
 import { createVehicle, getBrands, Brand } from "../../lib/api";
 import { getToken } from "../../lib/auth";
+import AcessorautoLogo from "../../components/AcessorautoLogo";
 
 type VehicleForm = {
   brand_id: string;
@@ -135,23 +136,26 @@ export default function NewVehicle() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
+      <header className="bg-gradient-to-r from-red-700 via-red-600 to-red-800 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center py-4">
             <Link
               to="/admin/vehicles"
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mr-4"
+              className="flex items-center gap-2 text-white hover:text-red-100 transition-colors mr-4 bg-white/10 px-3 py-2 rounded-lg"
             >
               <ArrowLeft className="w-5 h-5" />
               Voltar
             </Link>
+            <div className="bg-white p-2 rounded-lg mr-3">
+              <AcessorautoLogo size={32} />
+            </div>
             <div>
               <h1 className="text-2xl font-bold text-white">
                 Adicionar Veículo
               </h1>
-              <p className="text-gray-400 text-sm">
+              <p className="text-red-100 text-sm">
                 Cadastre um novo veículo no estoque
               </p>
             </div>
@@ -163,13 +167,13 @@ export default function NewVehicle() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Informações Básicas */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-6">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
               Informações Básicas
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Marca *
                 </label>
                 <select
@@ -178,7 +182,7 @@ export default function NewVehicle() {
                     setFormData({ ...formData, brand_id: e.target.value })
                   }
                   required
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 >
                   <option value="">Selecione uma marca</option>
                   {brands.map((brand) => (
@@ -190,7 +194,7 @@ export default function NewVehicle() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Modelo *
                 </label>
                 <input
@@ -200,13 +204,13 @@ export default function NewVehicle() {
                     setFormData({ ...formData, model: e.target.value })
                   }
                   required
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                   placeholder="Ex: Civic, Corolla, etc."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Ano *
                 </label>
                 <input
@@ -218,12 +222,12 @@ export default function NewVehicle() {
                   required
                   min={1900}
                   max={new Date().getFullYear() + 1}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Preço (R$) *
                 </label>
                 <input
@@ -238,13 +242,13 @@ export default function NewVehicle() {
                   required
                   min={0}
                   step={0.01}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                   placeholder="0.00"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Quilometragem *
                 </label>
                 <input
@@ -258,13 +262,13 @@ export default function NewVehicle() {
                   }
                   required
                   min={0}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                   placeholder="0"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Cor *
                 </label>
                 <input
@@ -274,13 +278,13 @@ export default function NewVehicle() {
                     setFormData({ ...formData, color: e.target.value })
                   }
                   required
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                   placeholder="Ex: Branco, Preto, Prata"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Combustível *
                 </label>
                 <select
@@ -288,7 +292,7 @@ export default function NewVehicle() {
                   onChange={(e) =>
                     setFormData({ ...formData, fuel_type: e.target.value })
                   }
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 >
                   <option value="flex">Flex</option>
                   <option value="gasoline">Gasolina</option>
@@ -299,7 +303,7 @@ export default function NewVehicle() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Transmissão *
                 </label>
                 <select
@@ -307,7 +311,7 @@ export default function NewVehicle() {
                   onChange={(e) =>
                     setFormData({ ...formData, transmission: e.target.value })
                   }
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 >
                   <option value="manual">Manual</option>
                   <option value="automatic">Automático</option>
@@ -318,7 +322,7 @@ export default function NewVehicle() {
 
             {/* Descrição */}
             <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Descrição
               </label>
               <textarea
@@ -327,15 +331,15 @@ export default function NewVehicle() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={4}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 placeholder="Descreva as características e condições do veículo..."
               />
             </div>
           </div>
 
           {/* Características */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-6">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
               Características
             </h2>
             <div className="flex gap-2 mb-4">
@@ -343,7 +347,7 @@ export default function NewVehicle() {
                 type="text"
                 value={currentFeature}
                 onChange={(e) => setCurrentFeature(e.target.value)}
-                className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 placeholder="Ex: Ar condicionado, Direção hidráulica..."
                 onKeyPress={(e) =>
                   e.key === "Enter" && (e.preventDefault(), addFeature())
@@ -352,7 +356,7 @@ export default function NewVehicle() {
               <button
                 type="button"
                 onClick={addFeature}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -361,7 +365,7 @@ export default function NewVehicle() {
               {formData.features.map((feature, index) => (
                 <span
                   key={index}
-                  className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                  className="bg-red-50 text-red-700 border border-red-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
                 >
                   {feature}
                   <button
@@ -377,10 +381,10 @@ export default function NewVehicle() {
           </div>
 
           {/* Upload de Imagens */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-6">Imagens</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Imagens</h2>
 
-            <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-400 transition-colors">
               <input
                 type="file"
                 multiple
@@ -394,8 +398,8 @@ export default function NewVehicle() {
                 htmlFor="image-upload"
                 className={`cursor-pointer ${uploading ? "opacity-50" : ""}`}
               >
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-400 text-lg mb-2">
+                <Upload className="w-12 h-12 text-red-600 mx-auto mb-4" />
+                <p className="text-gray-700 text-lg mb-2">
                   {uploading
                     ? "Fazendo upload..."
                     : "Clique para selecionar imagens"}
@@ -408,7 +412,7 @@ export default function NewVehicle() {
 
             {formData.images.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-white font-medium mb-4">
+                <h3 className="text-gray-900 font-medium mb-4">
                   Imagens Carregadas ({formData.images.length})
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -434,8 +438,8 @@ export default function NewVehicle() {
           </div>
 
           {/* Opções */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-6">Opções</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Opções</h2>
             <div className="space-y-4">
               <label className="flex items-center">
                 <input
@@ -444,9 +448,9 @@ export default function NewVehicle() {
                   onChange={(e) =>
                     setFormData({ ...formData, is_featured: e.target.checked })
                   }
-                  className="mr-3 rounded focus:ring-red-500"
+                  className="mr-3 rounded focus:ring-red-600 text-red-600"
                 />
-                <span className="text-gray-300">Veículo em destaque</span>
+                <span className="text-gray-700">Veículo em destaque</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -455,9 +459,9 @@ export default function NewVehicle() {
                   onChange={(e) =>
                     setFormData({ ...formData, is_sold: e.target.checked })
                   }
-                  className="mr-3 rounded focus:ring-red-500"
+                  className="mr-3 rounded focus:ring-red-600 text-red-600"
                 />
-                <span className="text-gray-300">Veículo vendido</span>
+                <span className="text-gray-700">Veículo vendido</span>
               </label>
             </div>
           </div>
@@ -466,14 +470,14 @@ export default function NewVehicle() {
           <div className="flex gap-4">
             <Link
               to="/admin/vehicles"
-              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors text-center"
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-6 rounded-lg font-semibold transition-colors text-center"
             >
               Cancelar
             </Link>
             <button
               type="submit"
               disabled={loading || uploading}
-              className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors"
+              className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg"
             >
               {loading ? "Salvando..." : "Salvar Veículo"}
             </button>
