@@ -268,6 +268,45 @@ export async function getProfile(
   );
 }
 
+export type UpdateProfileData = {
+  name?: string;
+  email?: string;
+};
+
+export async function updateProfile(
+  token: string,
+  data: UpdateProfileData
+): Promise<{ id: string; name: string; email: string; role: string }> {
+  return fetchAPI<{ id: string; name: string; email: string; role: string }>(
+    "/auth/profile",
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+}
+
+export type UpdatePasswordData = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export async function updatePassword(
+  token: string,
+  data: UpdatePasswordData
+): Promise<{ message: string }> {
+  return fetchAPI<{ message: string }>("/auth/password", {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 // Helper para adicionar token nas requisições autenticadas
 export function getAuthHeaders(token: string): HeadersInit {
   return {
