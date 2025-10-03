@@ -9,7 +9,7 @@ import {
   Shield,
   CheckCircle,
 } from "lucide-react";
-import { supabase, ContactInquiry } from "../lib/supabase";
+import { createContactInquiry, ContactInquiry } from "../lib/api";
 
 export default function About() {
   const [contactForm, setContactForm] = useState({
@@ -31,11 +31,7 @@ export default function About() {
         inquiry_type: "general",
       };
 
-      const { error } = await supabase
-        .from("contact_inquiries")
-        .insert([inquiry]);
-
-      if (error) throw error;
+      await createContactInquiry(inquiry);
 
       setSubmitSuccess(true);
       setContactForm({ name: "", email: "", phone: "", message: "" });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Car, DollarSign, Award, ChevronRight, Phone } from "lucide-react";
-import { supabase, Vehicle, Brand } from "../lib/supabase";
+import { getVehicles, getBrands, Vehicle, Brand } from "../lib/api";
 
 type HomeProps = {
   onNavigate: (page: string, vehicleId?: string) => void;
@@ -17,19 +17,13 @@ export default function Home({ onNavigate }: HomeProps) {
 
   async function loadData() {
     try {
-      const [vehiclesRes, brandsRes] = await Promise.all([
-        supabase
-          .from("vehicles")
-          .select("*, brands(*)")
-          .eq("is_featured", true)
-          .eq("is_sold", false)
-          .order("created_at", { ascending: false })
-          .limit(6),
-        supabase.from("brands").select("*").order("name"),
+      const [vehicles, brandsData] = await Promise.all([
+        getVehicles({ is_featured: true, is_sold: false }),
+        getBrands(),
       ]);
 
-      if (vehiclesRes.data) setFeaturedVehicles(vehiclesRes.data);
-      if (brandsRes.data) setBrands(brandsRes.data);
+      setFeaturedVehicles(vehicles.slice(0, 6));
+      setBrands(brandsData);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {

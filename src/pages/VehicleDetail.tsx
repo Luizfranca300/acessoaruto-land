@@ -13,7 +13,12 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { supabase, Vehicle, ContactInquiry } from "../lib/supabase";
+import {
+  getVehicle,
+  createContactInquiry,
+  Vehicle,
+  ContactInquiry,
+} from "../lib/api";
 
 type VehicleDetailProps = {
   vehicleId: string;
@@ -43,15 +48,8 @@ export default function VehicleDetail({
 
   async function loadVehicle() {
     try {
-      const { data } = await supabase
-        .from("vehicles")
-        .select("*, brands(*)")
-        .eq("id", vehicleId)
-        .maybeSingle();
-
-      if (data) {
-        setVehicle(data);
-      }
+      const data = await getVehicle(vehicleId);
+      setVehicle(data);
     } catch (error) {
       console.error("Error loading vehicle:", error);
     } finally {
@@ -70,11 +68,7 @@ export default function VehicleDetail({
         inquiry_type: "vehicle_interest",
       };
 
-      const { error } = await supabase
-        .from("contact_inquiries")
-        .insert([inquiry]);
-
-      if (error) throw error;
+      await createContactInquiry(inquiry);
 
       setSubmitSuccess(true);
       setFormData({ name: "", email: "", phone: "", message: "" });

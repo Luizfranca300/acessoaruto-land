@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Search, Car, Filter, X } from 'lucide-react';
-import { supabase, Vehicle, Brand } from '../lib/supabase';
+import { useEffect, useState } from "react";
+import { Search, Car, Filter, X } from "lucide-react";
+import { getVehicles, getBrands, Vehicle, Brand } from "../lib/api";
 
 type InventoryProps = {
   onNavigate: (page: string, vehicleId?: string) => void;
@@ -8,14 +8,15 @@ type InventoryProps = {
 
 export default function Inventory({ onNavigate }: InventoryProps) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
-  const [selectedTransmission, setSelectedTransmission] = useState('');
-  const [selectedFuelType, setSelectedFuelType] = useState('');
-  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedTransmission, setSelectedTransmission] = useState("");
+  const [selectedFuelType, setSelectedFuelType] = useState("");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
@@ -23,95 +24,109 @@ export default function Inventory({ onNavigate }: InventoryProps) {
   }, []);
 
   useEffect(() => {
-    filterVehicles();
-  }, [searchTerm, selectedBrand, selectedYear, selectedTransmission, selectedFuelType, priceRange]);
+    applyFilters();
+  }, [
+    searchTerm,
+    selectedBrand,
+    selectedYear,
+    selectedTransmission,
+    selectedFuelType,
+    priceRange,
+    allVehicles,
+  ]);
 
   async function loadData() {
     try {
-      const [vehiclesRes, brandsRes] = await Promise.all([
-        supabase
-          .from('vehicles')
-          .select('*, brands(*)')
-          .eq('is_sold', false)
-          .order('created_at', { ascending: false }),
-        supabase.from('brands').select('*').order('name'),
+      const [vehiclesData, brandsData] = await Promise.all([
+        getVehicles({ is_sold: false }),
+        getBrands(),
       ]);
 
-      if (vehiclesRes.data) setVehicles(vehiclesRes.data);
-      if (brandsRes.data) setBrands(brandsRes.data);
+      setAllVehicles(vehiclesData);
+      setVehicles(vehiclesData);
+      setBrands(brandsData);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setLoading(false);
     }
   }
 
-  async function filterVehicles() {
-    setLoading(true);
-    try {
-      let query = supabase
-        .from('vehicles')
-        .select('*, brands(*)')
-        .eq('is_sold', false);
+  function applyFilters() {
+    let filtered = [...allVehicles];
 
-      if (selectedBrand) {
-        query = query.eq('brand_id', selectedBrand);
-      }
-      if (selectedYear) {
-        query = query.eq('year', parseInt(selectedYear));
-      }
-      if (selectedTransmission) {
-        query = query.eq('transmission', selectedTransmission);
-      }
-      if (selectedFuelType) {
-        query = query.eq('fuel_type', selectedFuelType);
-      }
-      if (priceRange.min) {
-        query = query.gte('price', parseFloat(priceRange.min));
-      }
-      if (priceRange.max) {
-        query = query.lte('price', parseFloat(priceRange.max));
-      }
-
-      const { data } = await query.order('created_at', { ascending: false });
-
-      let filtered = data || [];
-      if (searchTerm) {
-        filtered = filtered.filter(
-          (v) =>
-            v.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            v.brands?.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      setVehicles(filtered);
-    } catch (error) {
-      console.error('Error filtering vehicles:', error);
-    } finally {
-      setLoading(false);
+    // Filtro de marca
+    if (selectedBrand) {
+      filtered = filtered.filter((v) => v.brand_id === selectedBrand);
     }
+
+    // Filtro de ano
+    if (selectedYear) {
+      filtered = filtered.filter((v) => v.year === parseInt(selectedYear));
+    }
+
+    // Filtro de transmissão
+    if (selectedTransmission) {
+      filtered = filtered.filter(
+        (v) => v.transmission === selectedTransmission
+      );
+    }
+
+    // Filtro de combustível
+    if (selectedFuelType) {
+      filtered = filtered.filter((v) => v.fuel_type === selectedFuelType);
+    }
+
+    // Filtro de preço
+    if (priceRange.min) {
+      filtered = filtered.filter((v) => v.price >= parseFloat(priceRange.min));
+    }
+    if (priceRange.max) {
+      filtered = filtered.filter((v) => v.price <= parseFloat(priceRange.max));
+    }
+
+    // Filtro de busca por texto
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (v) =>
+          v.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          v.brands?.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setVehicles(filtered);
   }
 
   function clearFilters() {
-    setSearchTerm('');
-    setSelectedBrand('');
-    setSelectedYear('');
-    setSelectedTransmission('');
-    setSelectedFuelType('');
-    setPriceRange({ min: '', max: '' });
+    setSearchTerm("");
+    setSelectedBrand("");
+    setSelectedYear("");
+    setSelectedTransmission("");
+    setSelectedFuelType("");
+    setPriceRange({ min: "", max: "" });
   }
 
-  const years = Array.from({ length: 25 }, (_, i) => new Date().getFullYear() - i);
+  const years = Array.from(
+    { length: 25 },
+    (_, i) => new Date().getFullYear() - i
+  );
 
   const hasActiveFilters =
-    selectedBrand || selectedYear || selectedTransmission || selectedFuelType || priceRange.min || priceRange.max;
+    selectedBrand ||
+    selectedYear ||
+    selectedTransmission ||
+    selectedFuelType ||
+    priceRange.min ||
+    priceRange.max;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-br from-red-700 to-red-800 text-white py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Nosso Estoque</h1>
-          <p className="text-xl text-red-50">Encontre o veículo perfeito para você</p>
+          <p className="text-xl text-red-50">
+            Encontre o veículo perfeito para você
+          </p>
         </div>
       </div>
 
@@ -137,9 +152,14 @@ export default function Inventory({ onNavigate }: InventoryProps) {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Buscar
+                  </label>
                   <div className="relative">
-                    <Search size={18} className="absolute left-3 top-3 text-gray-400" />
+                    <Search
+                      size={18}
+                      className="absolute left-3 top-3 text-gray-400"
+                    />
                     <input
                       type="text"
                       value={searchTerm}
@@ -151,7 +171,9 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Marca</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Marca
+                  </label>
                   <select
                     value={selectedBrand}
                     onChange={(e) => setSelectedBrand(e.target.value)}
@@ -167,7 +189,9 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ano</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Ano
+                  </label>
                   <select
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
@@ -183,7 +207,9 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Câmbio</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Câmbio
+                  </label>
                   <select
                     value={selectedTransmission}
                     onChange={(e) => setSelectedTransmission(e.target.value)}
@@ -197,7 +223,9 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Combustível</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Combustível
+                  </label>
                   <select
                     value={selectedFuelType}
                     onChange={(e) => setSelectedFuelType(e.target.value)}
@@ -213,19 +241,25 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Faixa de Preço</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Faixa de Preço
+                  </label>
                   <div className="space-y-2">
                     <input
                       type="number"
                       value={priceRange.min}
-                      onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                      onChange={(e) =>
+                        setPriceRange({ ...priceRange, min: e.target.value })
+                      }
                       placeholder="Mínimo"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     />
                     <input
                       type="number"
                       value={priceRange.max}
-                      onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                      onChange={(e) =>
+                        setPriceRange({ ...priceRange, max: e.target.value })
+                      }
                       placeholder="Máximo"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     />
@@ -238,7 +272,10 @@ export default function Inventory({ onNavigate }: InventoryProps) {
           <main className="flex-1">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-gray-600">
-                <span className="font-semibold text-gray-800">{vehicles.length}</span> veículos encontrados
+                <span className="font-semibold text-gray-800">
+                  {vehicles.length}
+                </span>{" "}
+                veículos encontrados
               </p>
               <button
                 onClick={() => setShowFilters(!showFilters)}
@@ -256,8 +293,12 @@ export default function Inventory({ onNavigate }: InventoryProps) {
             ) : vehicles.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg shadow-md">
                 <Car size={64} className="mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-600 text-lg mb-2">Nenhum veículo encontrado</p>
-                <p className="text-gray-500">Tente ajustar os filtros de busca</p>
+                <p className="text-gray-600 text-lg mb-2">
+                  Nenhum veículo encontrado
+                </p>
+                <p className="text-gray-500">
+                  Tente ajustar os filtros de busca
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -265,7 +306,7 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                   <div
                     key={vehicle.id}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all hover:scale-105 cursor-pointer"
-                    onClick={() => onNavigate('vehicle', vehicle.id)}
+                    onClick={() => onNavigate("vehicle", vehicle.id)}
                   >
                     <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 relative overflow-hidden">
                       {vehicle.images.length > 0 ? (
@@ -292,11 +333,16 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                       <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
                         <span>{vehicle.year}</span>
                         <span>•</span>
-                        <span>{vehicle.mileage.toLocaleString('pt-BR')} km</span>
+                        <span>
+                          {vehicle.mileage.toLocaleString("pt-BR")} km
+                        </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-2xl font-bold text-red-700">
-                          R$ {Number(vehicle.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          R${" "}
+                          {Number(vehicle.price).toLocaleString("pt-BR", {
+                            minimumFractionDigits: 2,
+                          })}
                         </span>
                         <button className="bg-red-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-800 transition-colors">
                           Ver
