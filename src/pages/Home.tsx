@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Car, DollarSign, Award, ChevronRight, Phone } from "lucide-react";
 import { getVehicles, getBrands, Vehicle, Brand } from "../lib/api";
 
-type HomeProps = {
-  onNavigate: (page: string, vehicleId?: string) => void;
-};
-
-export default function Home({ onNavigate }: HomeProps) {
+export default function Home() {
   const [featuredVehicles, setFeaturedVehicles] = useState<Vehicle[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,26 +98,26 @@ export default function Home({ onNavigate }: HomeProps) {
               className="flex flex-col sm:flex-row gap-4 animate-slide-up"
               style={{ animationDelay: "0.4s" }}
             >
-              <button
-                onClick={() => onNavigate("inventory")}
-                className="bg-white text-red-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-50 transition-all hover:scale-105 hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group btn-shine"
+              <Link
+                to="/inventory"
+                className="group bg-white text-brand-800 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 animate-slide-up shadow-lg hover:shadow-xl"
               >
-                Ver Estoque Completo
-                <ChevronRight
-                  size={20}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </button>
-              <button
-                onClick={() => onNavigate("sell")}
-                className="bg-red-900 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-950 transition-all hover:scale-105 hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group btn-shine"
+                <span className="flex items-center gap-2">
+                  <Car size={20} />
+                  Ver Estoque Completo
+                </span>
+                <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                to="/sell"
+                className="group border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-brand-800 transition-all duration-300 flex items-center gap-2 animate-slide-up shadow-lg"
               >
-                Vender Meu Carro
-                <DollarSign
-                  size={20}
-                  className="group-hover:rotate-12 transition-transform"
-                />
-              </button>
+                <span className="flex items-center gap-2">
+                  <DollarSign size={20} />
+                  Venda seu Carro
+                </span>
+                <DollarSign className="group-hover:rotate-12 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>
@@ -174,15 +171,15 @@ export default function Home({ onNavigate }: HomeProps) {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
               {brands.map((brand) => (
-                <button
+                <Link
                   key={brand.id}
-                  onClick={() => onNavigate("inventory")}
+                  to="/inventory"
                   className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center"
                 >
                   <span className="text-gray-700 font-semibold text-center">
                     {brand.name}
                   </span>
-                </button>
+                </Link>
               ))}
             </div>
           </div>
@@ -195,13 +192,13 @@ export default function Home({ onNavigate }: HomeProps) {
             <h2 className="text-3xl font-bold text-gray-800">
               Veículos em Destaque
             </h2>
-            <button
-              onClick={() => onNavigate("inventory")}
+            <Link
+              to="/inventory"
               className="text-red-700 font-semibold hover:text-red-800 flex items-center gap-2"
             >
               Ver Todos
               <ChevronRight size={20} />
-            </button>
+            </Link>
           </div>
 
           {loading ? (
@@ -217,10 +214,10 @@ export default function Home({ onNavigate }: HomeProps) {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredVehicles.map((vehicle) => (
-                <div
+                <Link
                   key={vehicle.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all hover:scale-105 cursor-pointer"
-                  onClick={() => onNavigate("vehicle", vehicle.id)}
+                  to={`/vehicle/${vehicle.id}`}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all hover:scale-105 cursor-pointer block"
                 >
                   <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 relative overflow-hidden">
                     {vehicle.images.length > 0 ? (
@@ -256,7 +253,7 @@ export default function Home({ onNavigate }: HomeProps) {
                       </button>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
@@ -270,13 +267,13 @@ export default function Home({ onNavigate }: HomeProps) {
             Avaliamos seu veículo gratuitamente e oferecemos a melhor proposta
             do mercado
           </p>
-          <button
-            onClick={() => onNavigate("sell")}
+          <Link
+            to="/sell"
             className="bg-white text-red-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-50 transition-all hover:scale-105 shadow-lg inline-flex items-center gap-2"
           >
             Avaliar Meu Veículo
             <ChevronRight size={20} />
-          </button>
+          </Link>
         </div>
       </section>
 

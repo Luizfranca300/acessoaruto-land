@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
   Car,
@@ -20,15 +21,8 @@ import {
   ContactInquiry,
 } from "../lib/api";
 
-type VehicleDetailProps = {
-  vehicleId: string;
-  onNavigate: (page: string) => void;
-};
-
-export default function VehicleDetail({
-  vehicleId,
-  onNavigate,
-}: VehicleDetailProps) {
+export default function VehicleDetail() {
+  const { id } = useParams<{ id: string }>();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -43,12 +37,16 @@ export default function VehicleDetail({
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
-    loadVehicle();
-  }, [vehicleId]);
+    if (id) {
+      loadVehicle();
+    }
+  }, [id]);
 
   async function loadVehicle() {
+    if (!id) return;
+
     try {
-      const data = await getVehicle(vehicleId);
+      const data = await getVehicle(id);
       setVehicle(data);
     } catch (error) {
       console.error("Error loading vehicle:", error);
@@ -64,7 +62,7 @@ export default function VehicleDetail({
     try {
       const inquiry: ContactInquiry = {
         ...formData,
-        vehicle_id: vehicleId,
+        vehicle_id: id!,
         inquiry_type: "vehicle_interest",
       };
 
@@ -111,12 +109,12 @@ export default function VehicleDetail({
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600 text-lg mb-4">Veículo não encontrado</p>
-          <button
-            onClick={() => onNavigate("inventory")}
-            className="bg-red-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-800 transition-colors"
+          <Link
+            to="/inventory"
+            className="bg-red-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-800 transition-colors inline-block"
           >
             Voltar ao Estoque
-          </button>
+          </Link>
         </div>
       </div>
     );
@@ -140,13 +138,13 @@ export default function VehicleDetail({
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
-          <button
-            onClick={() => onNavigate("inventory")}
+          <Link
+            to="/inventory"
             className="flex items-center gap-2 text-gray-600 hover:text-red-700 transition-colors"
           >
             <ArrowLeft size={20} />
             Voltar ao Estoque
-          </button>
+          </Link>
         </div>
       </div>
 

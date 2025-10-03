@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Search, Car, Filter, X } from "lucide-react";
 import { getVehicles, getBrands, Vehicle, Brand } from "../lib/api";
 
-type InventoryProps = {
-  onNavigate: (page: string, vehicleId?: string) => void;
-};
-
-export default function Inventory({ onNavigate }: InventoryProps) {
+export default function Inventory() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -303,10 +300,10 @@ export default function Inventory({ onNavigate }: InventoryProps) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {vehicles.map((vehicle) => (
-                  <div
+                  <Link
                     key={vehicle.id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all hover:scale-105 cursor-pointer"
-                    onClick={() => onNavigate("vehicle", vehicle.id)}
+                    to={`/vehicle/${vehicle.id}`}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all hover:scale-105 cursor-pointer block"
                   >
                     <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 relative overflow-hidden">
                       {vehicle.images.length > 0 ? (
@@ -345,11 +342,11 @@ export default function Inventory({ onNavigate }: InventoryProps) {
                           })}
                         </span>
                         <button className="bg-red-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-800 transition-colors">
-                          Ver
+                          Ver Detalhes
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

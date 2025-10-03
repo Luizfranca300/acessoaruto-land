@@ -141,10 +141,19 @@ export async function getVehicle(id: string): Promise<Vehicle> {
 export async function createVehicle(
   vehicle: Omit<Vehicle, "id" | "created_at" | "updated_at">
 ): Promise<Vehicle> {
+  const token = getToken();
   return fetchAPI<Vehicle>("/vehicles", {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(vehicle),
   });
+}
+
+// Helper para obter token
+function getToken(): string | null {
+  return localStorage.getItem("acessorauto_token");
 }
 
 export async function updateVehicle(
@@ -192,4 +201,68 @@ export async function healthCheck(): Promise<{
   timestamp: string;
 }> {
   return fetchAPI<{ status: string; timestamp: string }>("/health");
+}
+
+// ==================== AUTHENTICATION ====================
+
+export type AuthResponse = {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+};
+
+export type LoginCredentials = {
+  email: string;
+  password: string;
+};
+
+export type RegisterData = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export async function login(
+  credentials: LoginCredentials
+): Promise<AuthResponse> {
+  return fetchAPI<AuthResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(credentials),
+  });
+}
+
+export async function register(
+  data: RegisterData
+): Promise<{ id: string; name: string; email: string; role: string }> {
+  return fetchAPI<{ id: string; name: string; email: string; role: string }>(
+    "/auth/register",
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+}
+
+export async function getProfile(
+  token: string
+): Promise<{ id: string; name: string; email: string; role: string }> {
+  return fetchAPI<{ id: string; name: string; email: string; role: string }>(
+    "/auth/profile",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+}
+
+// Helper para adicionar token nas requisições autenticadas
+export function getAuthHeaders(token: string): HeadersInit {
+  return {
+    Authorization: `Bearer ${token}`,
+  };
 }
