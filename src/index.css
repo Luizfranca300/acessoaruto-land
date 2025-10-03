@@ -44,4 +44,32 @@
   .btn-shine:hover::before {
     left: 100%;
   }
+
+  /* Efeito de partículas brilhantes */
+  .sparkle {
+    position: relative;
+  }
+
+  .sparkle::after {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: sparkle 3s infinite;
+  }
+
+  @keyframes sparkle {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(var(--x, 20px), var(--y, -20px)) scale(1);
+    }
+  }
 }

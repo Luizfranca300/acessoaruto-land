@@ -34,6 +34,21 @@ export default function Home({ onNavigate }: HomeProps) {
   return (
     <div>
       <section className="relative bg-gradient-to-br from-red-700 via-red-600 to-red-800 text-white py-20 md:py-32 overflow-hidden">
+        {/* Imagem de fundo com parallax */}
+        <div className="absolute inset-0 opacity-20">
+          <div
+            className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80')",
+              backgroundBlendMode: "multiply",
+            }}
+          ></div>
+        </div>
+
+        {/* Gradiente animado overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-red-700/80 via-red-600/60 to-red-800/80 animate-gradient"></div>
+
         {/* Animação de fundo com formas geométricas */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-full">
@@ -55,6 +70,15 @@ export default function Home({ onNavigate }: HomeProps) {
               className="absolute top-1/2 left-20 w-40 h-40 border-2 border-white/10 rotate-12 animate-float"
               style={{ animationDelay: "1.5s" }}
             ></div>
+
+            {/* Linhas diagonais decorativas */}
+            <div className="absolute top-0 right-0 w-1 h-64 bg-gradient-to-b from-transparent via-white/20 to-transparent transform rotate-45 animate-float"></div>
+            <div className="absolute bottom-0 left-1/4 w-1 h-96 bg-gradient-to-b from-transparent via-white/10 to-transparent transform -rotate-12 animate-float-delayed"></div>
+
+            {/* Ícone de carro decorativo */}
+            <div className="absolute top-1/3 right-10 opacity-10 animate-float-delayed">
+              <Car size={120} strokeWidth={1} />
+            </div>
           </div>
         </div>
 
