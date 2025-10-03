@@ -31,6 +31,21 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-700 via-red-600 to-red-800 flex items-center justify-center p-4 overflow-hidden relative">
+      {/* Imagem de fundo com parallax */}
+      <div className="absolute inset-0 opacity-20">
+        <div
+          className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=80')",
+            backgroundBlendMode: "multiply",
+          }}
+        ></div>
+      </div>
+
+      {/* Gradiente animado overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-red-700/80 via-red-600/60 to-red-800/80 animate-gradient"></div>
+
       {/* Animação de fundo com formas geométricas */}
       <div className="absolute inset-0">
         <div className="absolute inset-0">
@@ -108,7 +123,7 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition-shadow"
-                  placeholder="admin@acessorauto.com.br"
+                  placeholder="Usuário"
                 />
               </div>
             </div>
@@ -156,16 +171,6 @@ export default function Login() {
               )}
             </button>
           </form>
-
-          {/* Credenciais de Teste */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-xs text-gray-600 text-center mb-2">
-              Credenciais padrão:
-            </p>
-            <p className="text-xs text-gray-800 text-center font-mono">
-              admin@acessorauto.com.br / admin123
-            </p>
-          </div>
         </div>
 
         {/* Link para voltar */}

@@ -34,8 +34,19 @@ export default function VehiclesAdmin() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-red-700 via-red-600 to-red-800 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-gradient-to-r from-red-700 via-red-600 to-red-800 shadow-lg relative overflow-hidden">
+        {/* Imagem de fundo no header */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80')",
+              backgroundBlendMode: "multiply",
+            }}
+          ></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
               <Link

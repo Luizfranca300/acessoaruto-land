@@ -5,7 +5,9 @@ import {
   Facebook,
   Instagram,
   MessageCircle,
+  Lock,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   const companyName =
@@ -124,7 +126,18 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} {companyName}. Todos os direitos
             reservados.
           </p>
-          <p className="mt-2 text-gray-500">CNPJ: {companyCNPJ}</p>
+          <p className="mt-2 text-gray-500">
+            CNPJ: {companyCNPJ}
+            <span className="mx-2">•</span>
+            <Link
+              to="/admin/login"
+              className="inline-flex items-center gap-1 text-gray-600 hover:text-gray-400 transition-colors text-xs"
+              title="Painel Administrativo"
+            >
+              <Lock size={12} />
+              Admin
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
