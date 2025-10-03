@@ -10,6 +10,7 @@ import {
 export default function Footer() {
   const companyName =
     import.meta.env.VITE_COMPANY_NAME || "Acessorauto Veículos";
+  const companyCNPJ = import.meta.env.VITE_COMPANY_CNPJ || "09.319.861/0001-01";
   const companyPhone = import.meta.env.VITE_COMPANY_PHONE || "(34) 3222-9303";
   const companyWhatsApp =
     import.meta.env.VITE_COMPANY_WHATSAPP || "5534999989303";
@@ -123,6 +124,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} {companyName}. Todos os direitos
             reservados.
           </p>
+          <p className="mt-2 text-gray-500">CNPJ: {companyCNPJ}</p>
         </div>
       </div>
     </footer>
