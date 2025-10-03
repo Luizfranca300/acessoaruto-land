@@ -11,6 +11,7 @@ import {
   parseMileageInput,
   formatYearInput,
 } from "../../lib/masks";
+import { useToast } from "../../lib/toast";
 
 type VehicleForm = {
   brand_id: string;
@@ -55,6 +56,7 @@ const COMMON_FEATURES = [
 export default function EditVehicle() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
@@ -112,7 +114,7 @@ export default function EditVehicle() {
         setMileageDisplay(formatMileageInput(vehicleData.mileage.toString()));
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
-        alert("Erro ao carregar veículo");
+        showToast("error", "Erro ao carregar veículo");
         navigate("/admin/vehicles");
       } finally {
         setLoadingData(false);
@@ -120,7 +122,7 @@ export default function EditVehicle() {
     }
 
     fetchData();
-  }, [id, navigate]);
+  }, [id, navigate, showToast]);
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -155,7 +157,7 @@ export default function EditVehicle() {
       }));
     } catch (error) {
       console.error("Erro no upload:", error);
-      alert("Erro ao fazer upload das imagens");
+      showToast("error", "Erro ao fazer upload das imagens");
     } finally {
       setUploading(false);
     }
@@ -191,11 +193,11 @@ export default function EditVehicle() {
 
     try {
       await updateVehicle(id!, formData);
-      alert("Veículo atualizado com sucesso!");
+      showToast("success", "Veículo atualizado com sucesso!");
       navigate("/admin/vehicles");
     } catch (error) {
       console.error("Erro ao atualizar veículo:", error);
-      alert("Erro ao atualizar veículo");
+      showToast("error", "Erro ao atualizar veículo");
     } finally {
       setLoading(false);
     }

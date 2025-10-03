@@ -72,4 +72,20 @@
       transform: translate(var(--x, 20px), var(--y, -20px)) scale(1);
     }
   }
+
+  /* Animação para toasts */
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
 }

@@ -11,6 +11,7 @@ import {
   parseMileageInput,
   formatYearInput,
 } from "../../lib/masks";
+import { useToast } from "../../lib/toast";
 
 type VehicleForm = {
   brand_id: string;
@@ -54,6 +55,7 @@ const COMMON_FEATURES = [
 
 export default function NewVehicle() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -122,7 +124,7 @@ export default function NewVehicle() {
       }));
     } catch (error) {
       console.error("Erro no upload:", error);
-      alert("Erro ao fazer upload das imagens");
+      showToast("error", "Erro ao fazer upload das imagens");
     } finally {
       setUploading(false);
     }
@@ -158,11 +160,11 @@ export default function NewVehicle() {
 
     try {
       await createVehicle(formData);
-      alert("Veículo criado com sucesso!");
+      showToast("success", "Veículo criado com sucesso!");
       navigate("/admin/vehicles");
     } catch (error) {
       console.error("Erro ao criar veículo:", error);
-      alert("Erro ao criar veículo");
+      showToast("error", "Erro ao criar veículo");
     } finally {
       setLoading(false);
     }

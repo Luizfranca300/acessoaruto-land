@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Plus, Edit3, Trash2, Eye, X } from "lucide-react";
 import { getVehicles, deleteVehicle, Vehicle } from "../../lib/api";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
+import { useToast } from "../../lib/toast";
 
 export default function VehiclesAdmin() {
+  const { showToast } = useToast();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
@@ -33,10 +35,10 @@ export default function VehiclesAdmin() {
       await deleteVehicle(vehicleToDelete.id);
       setVehicles(vehicles.filter((v) => v.id !== vehicleToDelete.id));
       setVehicleToDelete(null);
-      alert("Veículo deletado com sucesso!");
+      showToast("success", "Veículo deletado com sucesso!");
     } catch (error) {
       console.error("Erro ao deletar veículo:", error);
-      alert("Erro ao deletar veículo. Tente novamente.");
+      showToast("error", "Erro ao deletar veículo. Tente novamente.");
     } finally {
       setDeleting(false);
     }
