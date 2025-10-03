@@ -33,31 +33,69 @@ export default function Home({ onNavigate }: HomeProps) {
 
   return (
     <div>
-      <section className="relative bg-gradient-to-br from-red-700 via-red-600 to-red-800 text-white py-20 md:py-32">
+      <section className="relative bg-gradient-to-br from-red-700 via-red-600 to-red-800 text-white py-20 md:py-32 overflow-hidden">
+        {/* Animação de fundo com formas geométricas */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full">
+            {/* Círculos animados */}
+            <div className="absolute top-10 left-10 w-72 h-72 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
+            <div
+              className="absolute top-40 right-20 w-96 h-96 bg-red-400/20 rounded-full blur-3xl animate-pulse"
+              style={{ animationDelay: "1s" }}
+            ></div>
+            <div
+              className="absolute bottom-20 left-1/3 w-80 h-80 bg-red-600/20 rounded-full blur-3xl animate-pulse"
+              style={{ animationDelay: "2s" }}
+            ></div>
+
+            {/* Formas geométricas flutuantes */}
+            <div className="absolute top-20 right-1/4 w-32 h-32 border-2 border-white/10 rounded-lg rotate-45 animate-float"></div>
+            <div className="absolute bottom-32 right-20 w-24 h-24 border-2 border-white/10 rounded-full animate-float-delayed"></div>
+            <div
+              className="absolute top-1/2 left-20 w-40 h-40 border-2 border-white/10 rotate-12 animate-float"
+              style={{ animationDelay: "1.5s" }}
+            ></div>
+          </div>
+        </div>
+
+        {/* Overlay escuro */}
         <div className="absolute inset-0 bg-black/20"></div>
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in">
               Encontre o Carro dos Seus Sonhos
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-red-50">
+            <p
+              className="text-xl md:text-2xl mb-8 text-red-50 animate-slide-up"
+              style={{ animationDelay: "0.2s" }}
+            >
               Os melhores veículos seminovos com qualidade garantida e condições
               especiais de financiamento
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div
+              className="flex flex-col sm:flex-row gap-4 animate-slide-up"
+              style={{ animationDelay: "0.4s" }}
+            >
               <button
                 onClick={() => onNavigate("inventory")}
-                className="bg-white text-red-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-50 transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+                className="bg-white text-red-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-50 transition-all hover:scale-105 hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group btn-shine"
               >
                 Ver Estoque Completo
-                <ChevronRight size={20} />
+                <ChevronRight
+                  size={20}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </button>
               <button
                 onClick={() => onNavigate("sell")}
-                className="bg-red-900 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-950 transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+                className="bg-red-900 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-950 transition-all hover:scale-105 hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group btn-shine"
               >
                 Vender Meu Carro
-                <DollarSign size={20} />
+                <DollarSign
+                  size={20}
+                  className="group-hover:rotate-12 transition-transform"
+                />
               </button>
             </div>
           </div>
