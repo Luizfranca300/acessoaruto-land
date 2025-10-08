@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Plus, Pencil, Trash2, X } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, X, Wand2 } from "lucide-react";
 import { getBrands, Brand } from "../../lib/api";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 import { useToast } from "../../lib/toast";
@@ -19,6 +19,8 @@ export default function BrandsAdmin() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [searchingLogo, setSearchingLogo] = useState(false);
+  const [logoSuggestions, setLogoSuggestions] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadBrands() {
@@ -62,6 +64,121 @@ export default function BrandsAdmin() {
     setShowModal(false);
     setEditingBrand(null);
     setFormData({ name: "", logo_url: "" });
+    setLogoSuggestions([]);
+  }
+
+  async function searchBrandLogo() {
+    if (!formData.name.trim()) {
+      showToast("warning", "Digite o nome da marca primeiro");
+      return;
+    }
+
+    setSearchingLogo(true);
+    setLogoSuggestions([]);
+
+    try {
+      // Lista de URLs de logos de marcas populares (CDN confiável)
+      const brandLogos: Record<string, string> = {
+        toyota: "https://www.carlogos.org/car-logos/toyota-logo.png",
+        honda: "https://www.carlogos.org/car-logos/honda-logo.png",
+        volkswagen: "https://www.carlogos.org/car-logos/volkswagen-logo.png",
+        vw: "https://www.carlogos.org/car-logos/volkswagen-logo.png",
+        ford: "https://www.carlogos.org/car-logos/ford-logo.png",
+        chevrolet: "https://www.carlogos.org/car-logos/chevrolet-logo.png",
+        fiat: "https://www.carlogos.org/car-logos/fiat-logo.png",
+        nissan: "https://www.carlogos.org/car-logos/nissan-logo.png",
+        hyundai: "https://www.carlogos.org/car-logos/hyundai-logo.png",
+        jeep: "https://www.carlogos.org/car-logos/jeep-logo.png",
+        renault: "https://www.carlogos.org/car-logos/renault-logo.png",
+        peugeot: "https://www.carlogos.org/car-logos/peugeot-logo.png",
+        bmw: "https://www.carlogos.org/car-logos/bmw-logo.png",
+        mercedes: "https://www.carlogos.org/car-logos/mercedes-benz-logo.png",
+        "mercedes-benz":
+          "https://www.carlogos.org/car-logos/mercedes-benz-logo.png",
+        audi: "https://www.carlogos.org/car-logos/audi-logo.png",
+        volvo: "https://www.carlogos.org/car-logos/volvo-logo.png",
+        mazda: "https://www.carlogos.org/car-logos/mazda-logo.png",
+        mitsubishi: "https://www.carlogos.org/car-logos/mitsubishi-logo.png",
+        suzuki: "https://www.carlogos.org/car-logos/suzuki-logo.png",
+        kia: "https://www.carlogos.org/car-logos/kia-logo.png",
+        citroen: "https://www.carlogos.org/car-logos/citroen-logo.png",
+        citroën: "https://www.carlogos.org/car-logos/citroen-logo.png",
+        porsche: "https://www.carlogos.org/car-logos/porsche-logo.png",
+        ferrari: "https://www.carlogos.org/car-logos/ferrari-logo.png",
+        lamborghini: "https://www.carlogos.org/car-logos/lamborghini-logo.png",
+        tesla: "https://www.carlogos.org/car-logos/tesla-logo.png",
+        subaru: "https://www.carlogos.org/car-logos/subaru-logo.png",
+        lexus: "https://www.carlogos.org/car-logos/lexus-logo.png",
+        jaguar: "https://www.carlogos.org/car-logos/jaguar-logo.png",
+        "land rover": "https://www.carlogos.org/car-logos/land-rover-logo.png",
+        mini: "https://www.carlogos.org/car-logos/mini-logo.png",
+        dodge: "https://www.carlogos.org/car-logos/dodge-logo.png",
+        ram: "https://www.carlogos.org/car-logos/ram-logo.png",
+        chrysler: "https://www.carlogos.org/car-logos/chrysler-logo.png",
+        gmc: "https://www.carlogos.org/car-logos/gmc-logo.png",
+        cadillac: "https://www.carlogos.org/car-logos/cadillac-logo.png",
+        buick: "https://www.carlogos.org/car-logos/buick-logo.png",
+        alfa: "https://www.carlogos.org/car-logos/alfa-romeo-logo.png",
+        "alfa romeo": "https://www.carlogos.org/car-logos/alfa-romeo-logo.png",
+        maserati: "https://www.carlogos.org/car-logos/maserati-logo.png",
+        bentley: "https://www.carlogos.org/car-logos/bentley-logo.png",
+        "rolls-royce":
+          "https://www.carlogos.org/car-logos/rolls-royce-logo.png",
+        "aston martin":
+          "https://www.carlogos.org/car-logos/aston-martin-logo.png",
+        mcLaren: "https://www.carlogos.org/car-logos/mclaren-logo.png",
+        infiniti: "https://www.carlogos.org/car-logos/infiniti-logo.png",
+        acura: "https://www.carlogos.org/car-logos/acura-logo.png",
+        genesis: "https://www.carlogos.org/car-logos/genesis-logo.png",
+        lincoln: "https://www.carlogos.org/car-logos/lincoln-logo.png",
+      };
+
+      const brandName = formData.name.toLowerCase().trim();
+
+      // Buscar correspondência exata ou parcial
+      const suggestions: string[] = [];
+
+      if (brandLogos[brandName]) {
+        suggestions.push(brandLogos[brandName]);
+      }
+
+      // Buscar correspondências parciais
+      Object.keys(brandLogos).forEach((key) => {
+        if (key.includes(brandName) || brandName.includes(key)) {
+          if (!suggestions.includes(brandLogos[key])) {
+            suggestions.push(brandLogos[key]);
+          }
+        }
+      });
+
+      // Adicionar opções alternativas usando APIs públicas
+      if (suggestions.length === 0) {
+        // Logo.dev API - logos de marcas conhecidas
+        suggestions.push(`https://logo.clearbit.com/${brandName}.com`);
+
+        // Brandfetch API (algumas marcas gratuitas)
+        suggestions.push(
+          `https://img.logo.dev/${brandName}.com?token=pk_X-hoQuGkQTSIv3kJBYz3kQ`
+        );
+      }
+
+      if (suggestions.length > 0) {
+        setLogoSuggestions(suggestions);
+        // Auto-selecionar o primeiro logo se encontrado
+        setFormData({ ...formData, logo_url: suggestions[0] });
+        showToast("success", `${suggestions.length} logo(s) encontrado(s)!`);
+      } else {
+        showToast(
+          "warning",
+          "Nenhum logo encontrado. Digite a URL manualmente."
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao buscar logo:", error);
+      showToast("error", "Erro ao buscar logo");
+    } finally {
+      setSearchingLogo(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -298,16 +415,32 @@ export default function BrandsAdmin() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Nome da Marca *
                 </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  required
-                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
-                  placeholder="Ex: Toyota, Honda, Ford..."
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    required
+                    className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                    placeholder="Ex: Toyota, Honda, Ford..."
+                  />
+                  <button
+                    type="button"
+                    onClick={searchBrandLogo}
+                    disabled={searchingLogo || !formData.name.trim()}
+                    className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-md whitespace-nowrap"
+                    title="Buscar logo automaticamente"
+                  >
+                    <Wand2 className="w-4 h-4" />
+                    {searchingLogo ? "..." : "Auto"}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Digite o nome e clique em "Auto" para buscar o logo
+                  automaticamente
+                </p>
               </div>
 
               <div>
@@ -324,9 +457,51 @@ export default function BrandsAdmin() {
                   placeholder="https://exemplo.com/logo.png"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Cole a URL de uma imagem da logo da marca
+                  Cole a URL de uma imagem ou use o botão "Auto" acima
                 </p>
               </div>
+
+              {/* Sugestões de Logos */}
+              {logoSuggestions.length > 1 && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <p className="text-sm font-medium text-purple-900 mb-3">
+                    📸 {logoSuggestions.length} logos encontrados - Escolha um:
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {logoSuggestions.map((logoUrl, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() =>
+                          setFormData({ ...formData, logo_url: logoUrl })
+                        }
+                        className={`relative bg-white rounded-lg p-3 border-2 transition-all duration-200 hover:shadow-md ${
+                          formData.logo_url === logoUrl
+                            ? "border-purple-600 shadow-md"
+                            : "border-gray-200 hover:border-purple-300"
+                        }`}
+                      >
+                        <div className="h-16 flex items-center justify-center">
+                          <img
+                            src={logoUrl}
+                            alt={`Logo ${index + 1}`}
+                            className="max-h-full max-w-full object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50%25' y='50%25' font-size='40' text-anchor='middle' dy='.3em'%3E❌%3C/text%3E%3C/svg%3E";
+                            }}
+                          />
+                        </div>
+                        {formData.logo_url === logoUrl && (
+                          <div className="absolute top-1 right-1 bg-purple-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                            ✓
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {formData.logo_url && (
                 <div className="bg-gray-50 rounded-lg p-4">
