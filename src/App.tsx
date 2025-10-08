@@ -12,6 +12,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import VehiclesAdmin from "./pages/admin/VehiclesAdmin";
 import NewVehicle from "./pages/admin/NewVehicle";
 import EditVehicle from "./pages/admin/EditVehicle";
+import BrandsAdmin from "./pages/admin/BrandsAdmin";
 import Settings from "./pages/admin/Settings";
 import { ToastProvider } from "./lib/toast";
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/admin/vehicles" element={<VehiclesAdmin />} />
           <Route path="/admin/vehicles/new" element={<NewVehicle />} />
           <Route path="/admin/vehicles/:id/edit" element={<EditVehicle />} />
+          <Route path="/admin/brands" element={<BrandsAdmin />} />
 
           {/* Public Routes - Com Header/Footer */}
           <Route

@@ -211,18 +211,18 @@ export default function Dashboard() {
               </div>
             </Link>
 
-            {/* Adicionar Marca */}
+            {/* Gerenciar Marcas */}
             <Link
-              to="/admin/brands/new"
+              to="/admin/brands"
               className="flex items-center gap-3 p-5 bg-gradient-to-br from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 rounded-lg transition-all duration-200 text-left border border-red-200 hover:shadow-md"
             >
               <div className="w-12 h-12 bg-gradient-to-br from-red-700 to-red-800 rounded-lg flex items-center justify-center shadow-md">
-                <Plus className="w-6 h-6 text-white" />
+                <Tag className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Adicionar Marca</p>
+                <p className="font-semibold text-gray-900">Gerenciar Marcas</p>
                 <p className="text-sm text-gray-600">
-                  Cadastre uma nova marca de veículo
+                  Adicionar, editar e remover marcas
                 </p>
               </div>
             </Link>
