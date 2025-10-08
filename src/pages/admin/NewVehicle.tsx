@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, X, Plus } from "lucide-react";
+import { ArrowLeft, Upload, X, Plus, Sparkles } from "lucide-react";
 import { createVehicle, getBrands, Brand } from "../../lib/api";
 import { getToken } from "../../lib/auth";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
@@ -59,6 +59,7 @@ export default function NewVehicle() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
   const [formData, setFormData] = useState<VehicleForm>({
     brand_id: "",
     model: "",
@@ -88,6 +89,74 @@ export default function NewVehicle() {
       setBrands(data);
     } catch (error) {
       console.error("Erro ao carregar marcas:", error);
+    }
+  }
+
+  async function generateAIDescription() {
+    // Validar se dados mínimos foram preenchidos
+    if (!formData.brand_id || !formData.model || !formData.year) {
+      showToast(
+        "warning",
+        "Preencha marca, modelo e ano antes de gerar a descrição"
+      );
+      return;
+    }
+
+    setGeneratingDescription(true);
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Token não encontrado");
+
+      // Dados para enviar à IA
+      const brandName = brands.find((b) => b.id === formData.brand_id)?.name;
+
+      const dataToSend = {
+        brand: brandName,
+        model: formData.model,
+        year: formData.year,
+        color: formData.color,
+        fuel_type: formData.fuel_type,
+        transmission: formData.transmission,
+        mileage: formData.mileage,
+        features: formData.features,
+      };
+
+      const response = await fetch(
+        "http://localhost:3001/api/ai/generate-description",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro ao gerar descrição");
+      }
+
+      const result = await response.json();
+
+      // Atualizar descrição e características sugeridas
+      setFormData((prev) => ({
+        ...prev,
+        description: result.description || prev.description,
+        features: result.features
+          ? [...new Set([...prev.features, ...result.features])]
+          : prev.features,
+      }));
+
+      showToast("success", "Descrição gerada com IA! ✨");
+    } catch (error) {
+      console.error("Erro ao gerar descrição:", error);
+      showToast(
+        "error",
+        "Erro ao gerar descrição com IA. Tente escrever manualmente."
+      );
+    } finally {
+      setGeneratingDescription(false);
     }
   }
 
@@ -388,9 +457,26 @@ export default function NewVehicle() {
 
             {/* Descrição */}
             <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Descrição
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Descrição
+                </label>
+                <button
+                  type="button"
+                  onClick={generateAIDescription}
+                  disabled={
+                    generatingDescription ||
+                    !formData.brand_id ||
+                    !formData.model ||
+                    !formData.year
+                  }
+                  className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  title="Gera descrição profissional com IA baseada nos dados preenchidos"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {generatingDescription ? "Gerando..." : "Gerar com IA"}
+                </button>
+              </div>
               <textarea
                 value={formData.description}
                 onChange={(e) =>
@@ -400,6 +486,11 @@ export default function NewVehicle() {
                 className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 placeholder="Descreva as características e condições do veículo..."
               />
+              {!formData.brand_id || !formData.model || !formData.year ? (
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Preencha marca, modelo e ano para usar a geração com IA
+                </p>
+              ) : null}
             </div>
           </div>
 
