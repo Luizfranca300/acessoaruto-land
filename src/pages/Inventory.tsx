@@ -5,7 +5,6 @@ import { getVehicles, getBrands, Vehicle, Brand } from "../lib/api";
 
 export default function Inventory() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,82 +16,79 @@ export default function Inventory() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    loadData();
+    loadBrands();
   }, []);
 
+  async function loadBrands() {
+    try {
+      const brandsData = await getBrands();
+      setBrands(brandsData);
+    } catch (error) {
+      console.error("Erro ao carregar marcas:", error);
+    }
+  }
+
   useEffect(() => {
-    applyFilters();
+    async function fetchVehicles() {
+      setLoading(true);
+      try {
+        const filters: Record<string, string | number | boolean> = {
+          is_sold: false,
+        };
+
+        if (selectedBrand) {
+          filters.brand_id = selectedBrand;
+        }
+
+        if (selectedYear) {
+          filters.year = parseInt(selectedYear);
+        }
+
+        if (selectedTransmission) {
+          filters.transmission = selectedTransmission;
+        }
+
+        if (selectedFuelType) {
+          filters.fuel_type = selectedFuelType;
+        }
+
+        if (priceRange.min) {
+          filters.min_price = parseFloat(priceRange.min);
+        }
+
+        if (priceRange.max) {
+          filters.max_price = parseFloat(priceRange.max);
+        }
+
+        const vehiclesData = await getVehicles(filters);
+
+        // Aplicar filtro de busca por texto no frontend (não disponível no backend)
+        let filtered = vehiclesData;
+        if (searchTerm) {
+          filtered = vehiclesData.filter(
+            (v: Vehicle) =>
+              v.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              v.brands?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+
+        setVehicles(filtered);
+      } catch (error) {
+        console.error("Erro ao carregar veículos:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchVehicles();
   }, [
-    searchTerm,
     selectedBrand,
     selectedYear,
     selectedTransmission,
     selectedFuelType,
     priceRange,
-    allVehicles,
+    searchTerm,
   ]);
-
-  async function loadData() {
-    try {
-      const [vehiclesData, brandsData] = await Promise.all([
-        getVehicles({ is_sold: false }),
-        getBrands(),
-      ]);
-
-      setAllVehicles(vehiclesData);
-      setVehicles(vehiclesData);
-      setBrands(brandsData);
-    } catch (error) {
-      console.error("Error loading data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function applyFilters() {
-    let filtered = [...allVehicles];
-
-    // Filtro de marca
-    if (selectedBrand) {
-      filtered = filtered.filter((v) => v.brand_id === selectedBrand);
-    }
-
-    // Filtro de ano
-    if (selectedYear) {
-      filtered = filtered.filter((v) => v.year === parseInt(selectedYear));
-    }
-
-    // Filtro de transmissão
-    if (selectedTransmission) {
-      filtered = filtered.filter(
-        (v) => v.transmission === selectedTransmission
-      );
-    }
-
-    // Filtro de combustível
-    if (selectedFuelType) {
-      filtered = filtered.filter((v) => v.fuel_type === selectedFuelType);
-    }
-
-    // Filtro de preço
-    if (priceRange.min) {
-      filtered = filtered.filter((v) => v.price >= parseFloat(priceRange.min));
-    }
-    if (priceRange.max) {
-      filtered = filtered.filter((v) => v.price <= parseFloat(priceRange.max));
-    }
-
-    // Filtro de busca por texto
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (v) =>
-          v.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          v.brands?.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setVehicles(filtered);
-  }
 
   function clearFilters() {
     setSearchTerm("");
