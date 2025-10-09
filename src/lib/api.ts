@@ -185,7 +185,7 @@ export async function deleteVehicle(id: string): Promise<void> {
 export async function createContactInquiry(
   inquiry: ContactInquiry
 ): Promise<{ id: string }> {
-  return fetchAPI<{ id: string }>("/contacts", {
+  return fetchAPI<{ id: string }>("/contact-inquiries", {
     method: "POST",
     body: JSON.stringify(inquiry),
   });
@@ -196,7 +196,7 @@ export async function createContactInquiry(
 export async function createValuation(
   valuation: VehicleValuation
 ): Promise<{ id: string }> {
-  return fetchAPI<{ id: string }>("/valuations", {
+  return fetchAPI<{ id: string }>("/vehicle-valuations", {
     method: "POST",
     body: JSON.stringify(valuation),
   });
