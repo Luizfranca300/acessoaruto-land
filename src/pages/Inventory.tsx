@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Search, Car, Filter, X } from "lucide-react";
 import { getVehicles, getBrands, Vehicle, Brand } from "../lib/api";
 
 export default function Inventory() {
+  const [searchParams] = useSearchParams();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState(() => {
+    // Inicializar com o valor da URL se existir
+    return searchParams.get("brand") || "";
+  });
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedTransmission, setSelectedTransmission] = useState("");
   const [selectedFuelType, setSelectedFuelType] = useState("");
@@ -60,7 +64,9 @@ export default function Inventory() {
           filters.max_price = parseFloat(priceRange.max);
         }
 
+        console.log("Filtros enviados ao backend:", filters);
         const vehiclesData = await getVehicles(filters);
+        console.log("Veículos recebidos:", vehiclesData.length);
 
         // Aplicar filtro de busca por texto no frontend (não disponível no backend)
         let filtered = vehiclesData;

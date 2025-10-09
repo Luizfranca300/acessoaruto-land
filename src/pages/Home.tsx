@@ -163,42 +163,6 @@ export default function Home() {
         </div>
       </section>
 
-      {brands.length > 0 && (
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
-              Marcas Disponíveis
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-              {brands.map((brand) => (
-                <Link
-                  key={brand.id}
-                  to="/inventory"
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 flex flex-col items-center justify-center gap-3"
-                >
-                  {brand.logo_url ? (
-                    <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-gray-200">
-                      <img
-                        src={brand.logo_url}
-                        alt={`Logo ${brand.name}`}
-                        className="w-full h-full object-contain p-2"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center border-2 border-red-300">
-                      <Car size={32} className="text-red-700" />
-                    </div>
-                  )}
-                  <span className="text-gray-700 font-semibold text-center text-sm">
-                    {brand.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
@@ -272,6 +236,42 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {brands.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+              Marcas Disponíveis
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              {brands.map((brand) => (
+                <Link
+                  key={brand.id}
+                  to={`/inventory?brand=${brand.id}`}
+                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 flex flex-col items-center justify-center gap-3"
+                >
+                  {brand.logo_url ? (
+                    <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+                      <img
+                        src={brand.logo_url}
+                        alt={`Logo ${brand.name}`}
+                        className="w-full h-full object-contain p-2"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center border-2 border-red-300">
+                      <Car size={32} className="text-red-700" />
+                    </div>
+                  )}
+                  <span className="text-gray-700 font-semibold text-center text-sm">
+                    {brand.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-16 bg-gradient-to-br from-red-700 to-red-800 text-white">
         <div className="container mx-auto px-4 text-center">
