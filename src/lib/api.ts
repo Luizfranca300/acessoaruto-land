@@ -247,35 +247,78 @@ export type RegisterData = {
 export async function login(
   credentials: LoginCredentials
 ): Promise<AuthResponse> {
-  return fetchAPI<AuthResponse>("/auth/login", {
+  const response = await fetchAPI<{
+    access_token: string;
+    user: {
+      id: string;
+      email: string;
+      full_name: string;
+      is_admin: boolean;
+    };
+  }>("/auth/login", {
     method: "POST",
     body: JSON.stringify(credentials),
   });
+
+  // Transformar resposta do backend para o formato esperado pelo frontend
+  return {
+    token: response.access_token,
+    user: {
+      id: response.user.id,
+      name: response.user.full_name,
+      email: response.user.email,
+      role: response.user.is_admin ? "admin" : "user",
+    },
+  };
 }
 
 export async function register(
   data: RegisterData
 ): Promise<{ id: string; name: string; email: string; role: string }> {
-  return fetchAPI<{ id: string; name: string; email: string; role: string }>(
-    "/auth/register",
-    {
-      method: "POST",
-      body: JSON.stringify(data),
-    }
-  );
+  const response = await fetchAPI<{
+    id: string;
+    email: string;
+    full_name: string;
+    is_admin: boolean;
+  }>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify({
+      email: data.email,
+      password: data.password,
+      full_name: data.name,
+    }),
+  });
+
+  // Transformar resposta do backend para o formato esperado pelo frontend
+  return {
+    id: response.id,
+    name: response.full_name,
+    email: response.email,
+    role: response.is_admin ? "admin" : "user",
+  };
 }
 
 export async function getProfile(
   token: string
 ): Promise<{ id: string; name: string; email: string; role: string }> {
-  return fetchAPI<{ id: string; name: string; email: string; role: string }>(
-    "/auth/profile",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await fetchAPI<{
+    id: string;
+    email: string;
+    full_name: string;
+    is_admin: boolean;
+  }>("/auth/profile", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  // Transformar resposta do backend para o formato esperado pelo frontend
+  return {
+    id: response.id,
+    name: response.full_name,
+    email: response.email,
+    role: response.is_admin ? "admin" : "user",
+  };
 }
 
 export type UpdateProfileData = {
@@ -287,16 +330,29 @@ export async function updateProfile(
   token: string,
   data: UpdateProfileData
 ): Promise<{ id: string; name: string; email: string; role: string }> {
-  return fetchAPI<{ id: string; name: string; email: string; role: string }>(
-    "/auth/profile",
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const response = await fetchAPI<{
+    id: string;
+    email: string;
+    full_name: string;
+    is_admin: boolean;
+  }>("/auth/profile", {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      email: data.email,
+      full_name: data.name,
+    }),
+  });
+
+  // Transformar resposta do backend para o formato esperado pelo frontend
+  return {
+    id: response.id,
+    name: response.full_name,
+    email: response.email,
+    role: response.is_admin ? "admin" : "user",
+  };
 }
 
 export type UpdatePasswordData = {
@@ -313,7 +369,10 @@ export async function updatePassword(
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      current_password: data.currentPassword,
+      new_password: data.newPassword,
+    }),
   });
 }
 
