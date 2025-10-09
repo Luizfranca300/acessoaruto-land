@@ -39,10 +39,6 @@ export default function Financing() {
   }
 
   const monthlyInstallment = calculateInstallment();
-  const totalAmount =
-    monthlyInstallment * simulationValues.installments +
-    simulationValues.downPayment;
-  const totalInterest = totalAmount - simulationValues.vehiclePrice;
 
   async function handleSubmitContact(e: React.FormEvent) {
     e.preventDefault();
@@ -231,27 +227,6 @@ export default function Financing() {
                       minimumFractionDigits: 2,
                     })}
                   </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-red-200">
-                  <div>
-                    <p className="text-sm text-gray-600">Total a Pagar</p>
-                    <p className="text-lg font-bold text-gray-800">
-                      R${" "}
-                      {totalAmount.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                      })}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Total de Juros</p>
-                    <p className="text-lg font-bold text-gray-800">
-                      R${" "}
-                      {totalInterest.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                      })}
-                    </p>
-                  </div>
                 </div>
               </div>
 
