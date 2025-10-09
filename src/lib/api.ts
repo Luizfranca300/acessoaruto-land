@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/v1";
 
 // Tipos exportados do antigo supabase.ts
 export type Brand = {
@@ -56,6 +56,8 @@ async function fetchAPI<T>(
 ): Promise<T> {
   const url = `${API_URL}${endpoint}`;
 
+  console.log("[API] Request:", { url, method: options?.method || "GET" });
+
   try {
     const response = await fetch(url, {
       ...options,
@@ -65,14 +67,22 @@ async function fetchAPI<T>(
       },
     });
 
+    console.log("[API] Response:", {
+      status: response.status,
+      ok: response.ok,
+      url,
+    });
+
     if (!response.ok) {
       const error = await response
         .json()
         .catch(() => ({ message: "Erro na requisição" }));
+      console.error("[API] Error response:", error);
       throw new Error(error.message || `Erro ${response.status}`);
     }
 
     const data = await response.json();
+    console.log("[API] Data received:", data);
 
     // Se a API retornar {data: [...], error: null}, extrair apenas data
     if (data && typeof data === "object" && "data" in data) {
@@ -81,7 +91,7 @@ async function fetchAPI<T>(
 
     return data;
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("[API] Fetch error:", error);
     throw error;
   }
 }

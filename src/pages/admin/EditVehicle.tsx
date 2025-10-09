@@ -139,7 +139,7 @@ export default function EditVehicle() {
         uploadFormData.append("images", file);
       });
 
-      const response = await fetch("http://localhost:3001/upload/images", {
+      const response = await fetch("http://localhost:3001/v1/upload/images", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -201,7 +201,7 @@ export default function EditVehicle() {
       };
 
       const response = await fetch(
-        "http://localhost:3001/ai/generate-description",
+        "http://localhost:3001/v1/ai/generate-description",
         {
           method: "POST",
           headers: {

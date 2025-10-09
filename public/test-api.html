@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste API - Acessorauto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error {
+            color: #d32f2f;
+        }
+        .success {
+            color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de API - Acessorauto</h1>
+    
+    <div class="test-section">
+        <h2>Configuração</h2>
+        <p><strong>API Base URL:</strong> <code id="api-url"></code></p>
+        <p><strong>Frontend URL:</strong> <code id="frontend-url"></code></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Testes de Endpoints</h2>
+        
+        <div>
+            <button onclick="testHealth()">🏥 Test Health Check</button>
+            <button onclick="testBrands()">🏷️ Test Brands</button>
+            <button onclick="testVehicles()">🚗 Test Vehicles</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/v1';
+        
+        document.getElementById('api-url').textContent = API_URL;
+        document.getElementById('frontend-url').textContent = window.location.origin;
+
+        function showResult(title, data, isError = false) {
+            const results = document.getElementById('results');
+            const className = isError ? 'error' : 'success';
+            results.innerHTML += `
+                <div style="margin: 20px 0;">
+                    <h3 class="${className}">${title}</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        async function testHealth() {
+            document.getElementById('results').innerHTML = '';
+            try {
+                console.log('Testing health...');
+                const response = await fetch(`${API_URL}/health`);
+                console.log('Health response:', response);
+                const data = await response.json();
+                showResult('✅ Health Check', data);
+            } catch (error) {
+                console.error('Health error:', error);
+                showResult('❌ Health Check Failed', { error: error.message }, true);
+            }
+        }
+
+        async function testBrands() {
+            document.getElementById('results').innerHTML = '';
+            try {
+                console.log('Testing brands...');
+                const response = await fetch(`${API_URL}/brands`);
+                console.log('Brands response:', response);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult(`✅ Brands (${data.length} items)`, data.slice(0, 3));
+            } catch (error) {
+                console.error('Brands error:', error);
+                showResult('❌ Brands Failed', { 
+                    error: error.message,
+                    stack: error.stack 
+                }, true);
+            }
+        }
+
+        async function testVehicles() {
+            document.getElementById('results').innerHTML = '';
+            try {
+                console.log('Testing vehicles...');
+                const response = await fetch(`${API_URL}/vehicles`);
+                console.log('Vehicles response:', response);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult(`✅ Vehicles (${data.length} items)`, data.slice(0, 2));
+            } catch (error) {
+                console.error('Vehicles error:', error);
+                showResult('❌ Vehicles Failed', { 
+                    error: error.message,
+                    stack: error.stack 
+                }, true);
+            }
+        }
+
+        // Test CORS
+        console.log('Frontend origin:', window.location.origin);
+        console.log('API URL:', API_URL);
+    </script>
+</body>
+</html>
