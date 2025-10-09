@@ -174,9 +174,22 @@ export default function Home() {
                 <Link
                   key={brand.id}
                   to="/inventory"
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center"
+                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 flex flex-col items-center justify-center gap-3"
                 >
-                  <span className="text-gray-700 font-semibold text-center">
+                  {brand.logo_url ? (
+                    <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+                      <img
+                        src={brand.logo_url}
+                        alt={`Logo ${brand.name}`}
+                        className="w-full h-full object-contain p-2"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center border-2 border-red-300">
+                      <Car size={32} className="text-red-700" />
+                    </div>
+                  )}
+                  <span className="text-gray-700 font-semibold text-center text-sm">
                     {brand.name}
                   </span>
                 </Link>

@@ -190,8 +190,8 @@ export default function BrandsAdmin() {
       if (!token) throw new Error("Token não encontrado");
 
       const url = editingBrand
-        ? `http://localhost:3001/api/brands/${editingBrand.id}`
-        : "http://localhost:3001/api/brands";
+        ? `http://localhost:3001/v1/brands/${editingBrand.id}`
+        : "http://localhost:3001/v1/brands";
 
       const method = editingBrand ? "PUT" : "POST";
 
@@ -233,7 +233,7 @@ export default function BrandsAdmin() {
       if (!token) throw new Error("Token não encontrado");
 
       const response = await fetch(
-        `http://localhost:3001/api/brands/${brandToDelete.id}`,
+        `http://localhost:3001/v1/brands/${brandToDelete.id}`,
         {
           method: "DELETE",
           headers: {
