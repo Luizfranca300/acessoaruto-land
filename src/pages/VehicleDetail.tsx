@@ -13,6 +13,7 @@ import {
   MessageCircle,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import {
   getVehicle,
@@ -35,7 +36,8 @@ export default function VehicleDetail() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [showLightbox, setShowLightbox] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
@@ -99,11 +101,27 @@ export default function VehicleDetail() {
     }
   }
 
-  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setZoomPosition({ x, y });
+  function openLightbox(index: number) {
+    setLightboxIndex(index);
+    setShowLightbox(true);
+  }
+
+  function closeLightbox() {
+    setShowLightbox(false);
+  }
+
+  function nextLightboxImage() {
+    if (vehicle) {
+      setLightboxIndex((prev) => (prev + 1) % vehicle.images.length);
+    }
+  }
+
+  function prevLightboxImage() {
+    if (vehicle) {
+      setLightboxIndex(
+        (prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length
+      );
+    }
   }
 
   function handleTouchStart(e: React.TouchEvent) {
@@ -196,44 +214,38 @@ export default function VehicleDetail() {
               >
                 {vehicle.images.length > 0 ? (
                   <>
-                    {/* Desktop: Zoom on hover */}
+                    {/* Imagem clicável */}
                     <div 
-                      className="hidden md:block relative w-full h-full cursor-zoom-in"
-                      onMouseMove={handleMouseMove}
+                      className="relative w-full h-full cursor-pointer"
+                      onClick={() => openLightbox(currentImageIndex)}
                     >
-                      <img
-                        src={vehicle.images[currentImageIndex]}
-                        alt={`${vehicle.brands?.name} ${vehicle.model}`}
-                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-150"
-                        style={{
-                          transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        }}
-                      />
-                    </div>
-
-                    {/* Mobile: Normal view with swipe */}
-                    <div className="md:hidden relative w-full h-full">
                       <img
                         src={vehicle.images[currentImageIndex]}
                         alt={`${vehicle.brands?.name} ${vehicle.model}`}
                         className="w-full h-full object-cover"
                       />
+                      {/* Indicador de clique */}
+                      <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
+                          Clique para ampliar
+                        </div>
+                      </div>
                     </div>
 
                     {vehicle.images.length > 1 && (
                       <>
-                        {/* Navigation buttons - hidden on mobile, shown on desktop */}
+                        {/* Navigation buttons - agora visíveis em mobile também */}
                         <button
                           onClick={prevImage}
-                          className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10"
+                          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10"
                         >
-                          <ChevronLeft size={24} />
+                          <ChevronLeft size={20} className="md:w-6 md:h-6" />
                         </button>
                         <button
                           onClick={nextImage}
-                          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10"
+                          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10"
                         >
-                          <ChevronRight size={24} />
+                          <ChevronRight size={20} className="md:w-6 md:h-6" />
                         </button>
                         
                         {/* Image indicators */}
@@ -249,11 +261,6 @@ export default function VehicleDetail() {
                               }`}
                             />
                           ))}
-                        </div>
-
-                        {/* Mobile swipe instruction - shown briefly */}
-                        <div className="md:hidden absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full opacity-0 group-active:opacity-100 transition-opacity">
-                          Deslize para navegar
                         </div>
                       </>
                     )}
@@ -376,7 +383,7 @@ export default function VehicleDetail() {
                 </a>
                 <a
                   href={`https://wa.me/5534999989303?text=${encodeURIComponent(
-                    `Olá! Tenho interesse no veículo ${vehicle.brands?.name} ${vehicle.model} ${vehicle.year}`
+                    `Olá! Tenho interesse no veículo ${vehicle.brands?.name || ''} ${vehicle.model} ${vehicle.year}`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -468,6 +475,89 @@ export default function VehicleDetail() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {showLightbox && vehicle && (
+        <div 
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+          onClick={closeLightbox}
+        >
+          {/* Botão Fechar */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors z-50"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Navegação */}
+          {vehicle.images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevLightboxImage();
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/70 transition-colors z-50"
+              >
+                <ChevronLeft size={32} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextLightboxImage();
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/70 transition-colors z-50"
+              >
+                <ChevronRight size={32} />
+              </button>
+            </>
+          )}
+
+          {/* Imagem */}
+          <div 
+            className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={vehicle.images[lightboxIndex]}
+              alt={`${vehicle.brands?.name} ${vehicle.model}`}
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+
+          {/* Contador de imagens */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/50 px-4 py-2 rounded-full text-sm">
+            {lightboxIndex + 1} / {vehicle.images.length}
+          </div>
+
+          {/* Miniaturas */}
+          {vehicle.images.length > 1 && (
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-[90vw] px-4 py-2">
+              {vehicle.images.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxIndex(index);
+                  }}
+                  className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                    index === lightboxIndex
+                      ? "border-white scale-110"
+                      : "border-white/30 hover:border-white/60"
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`Miniatura ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
