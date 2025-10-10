@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, Phone, Eye, Trash2 } from "lucide-react";
 import { getToken, removeToken } from "../../lib/auth";
+import { API_URL } from "../../lib/api";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 
 type Contact = {
@@ -32,7 +33,7 @@ export default function ContactsAdmin() {
       try {
         const token = getToken();
         const response = await fetch(
-          "http://localhost:3001/v1/contact-inquiries",
+          `${API_URL}/contact-inquiries`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -68,7 +69,7 @@ export default function ContactsAdmin() {
     try {
       const token = getToken();
       const response = await fetch(
-        `http://localhost:3001/v1/contact-inquiries/${contactToDelete.id}`,
+        `${API_URL}/contact-inquiries/${contactToDelete.id}`,
         {
           method: "DELETE",
           headers: {

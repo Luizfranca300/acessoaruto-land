@@ -10,6 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { getToken, removeToken } from "../../lib/auth";
+import { API_URL } from "../../lib/api";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 
 type Valuation = {
@@ -49,7 +50,7 @@ export default function ValuationsAdmin() {
       try {
         const token = getToken();
         const response = await fetch(
-          "http://localhost:3001/v1/vehicle-valuations",
+          `${API_URL}/vehicle-valuations`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,7 +86,7 @@ export default function ValuationsAdmin() {
     try {
       const token = getToken();
       const response = await fetch(
-        `http://localhost:3001/v1/vehicle-valuations/${valuationToDelete.id}`,
+        `${API_URL}/vehicle-valuations/${valuationToDelete.id}`,
         {
           method: "DELETE",
           headers: {

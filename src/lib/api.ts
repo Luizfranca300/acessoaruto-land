@@ -1,5 +1,8 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/v1";
 
+// Export API_URL para ser usado em outros lugares
+export { API_URL };
+
 // Tipos exportados do antigo supabase.ts
 export type Brand = {
   id: string;

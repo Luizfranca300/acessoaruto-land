@@ -67,7 +67,8 @@
     </div>
 
     <script>
-      const API_URL = "http://localhost:3001/v1";
+      // Tenta obter a URL da API do meta tag injetado pelo Vite, caso contrário usa o padrão
+      const API_URL = document.querySelector('meta[name="api-url"]')?.content || "http://localhost:3001/v1";
 
       document.getElementById("api-url").textContent = API_URL;
       document.getElementById("frontend-url").textContent =

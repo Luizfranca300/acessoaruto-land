@@ -1,7 +1,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Upload, X, Plus, Sparkles } from "lucide-react";
-import { getVehicle, updateVehicle, getBrands, Brand } from "../../lib/api";
+import { getVehicle, updateVehicle, getBrands, Brand, API_URL } from "../../lib/api";
 import { getToken } from "../../lib/auth";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 import {
@@ -139,7 +139,7 @@ export default function EditVehicle() {
         uploadFormData.append("images", file);
       });
 
-      const response = await fetch("http://localhost:3001/v1/upload/images", {
+      const response = await fetch(`${API_URL}/upload/images`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -201,7 +201,7 @@ export default function EditVehicle() {
       };
 
       const response = await fetch(
-        "http://localhost:3001/v1/ai/generate-description",
+        `${API_URL}/ai/generate-description`,
         {
           method: "POST",
           headers: {

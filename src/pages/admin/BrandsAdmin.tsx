@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Plus, Pencil, Trash2, X, Wand2 } from "lucide-react";
-import { getBrands, Brand } from "../../lib/api";
+import { getBrands, Brand, API_URL } from "../../lib/api";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 import { useToast } from "../../lib/toast";
 import { getToken } from "../../lib/auth";
@@ -190,8 +190,8 @@ export default function BrandsAdmin() {
       if (!token) throw new Error("Token não encontrado");
 
       const url = editingBrand
-        ? `http://localhost:3001/v1/brands/${editingBrand.id}`
-        : "http://localhost:3001/v1/brands";
+        ? `${API_URL}/brands/${editingBrand.id}`
+        : `${API_URL}/brands`;
 
       const method = editingBrand ? "PUT" : "POST";
 
@@ -233,7 +233,7 @@ export default function BrandsAdmin() {
       if (!token) throw new Error("Token não encontrado");
 
       const response = await fetch(
-        `http://localhost:3001/v1/brands/${brandToDelete.id}`,
+        `${API_URL}/brands/${brandToDelete.id}`,
         {
           method: "DELETE",
           headers: {
