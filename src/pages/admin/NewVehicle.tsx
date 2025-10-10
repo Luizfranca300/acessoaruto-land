@@ -78,6 +78,7 @@ export default function NewVehicle() {
   const [currentFeature, setCurrentFeature] = useState("");
   const [priceDisplay, setPriceDisplay] = useState("");
   const [mileageDisplay, setMileageDisplay] = useState("");
+  const [yearDisplay, setYearDisplay] = useState(new Date().getFullYear().toString());
 
   useEffect(() => {
     loadBrands();
@@ -330,10 +331,11 @@ export default function NewVehicle() {
                 </label>
                 <input
                   type="text"
-                  value={formData.year}
+                  value={yearDisplay}
                   onChange={(e) => {
                     const formatted = formatYearInput(e.target.value);
-                    if (formatted) {
+                    setYearDisplay(formatted);
+                    if (formatted && formatted.length === 4) {
                       const year = parseInt(formatted);
                       if (
                         year >= 1900 &&

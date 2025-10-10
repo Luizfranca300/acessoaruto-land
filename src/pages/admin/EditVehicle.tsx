@@ -80,6 +80,7 @@ export default function EditVehicle() {
   const [currentFeature, setCurrentFeature] = useState("");
   const [priceDisplay, setPriceDisplay] = useState("");
   const [mileageDisplay, setMileageDisplay] = useState("");
+  const [yearDisplay, setYearDisplay] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -109,10 +110,11 @@ export default function EditVehicle() {
           is_sold: vehicleData.is_sold,
         });
 
-        // Formatar preço e quilometragem para exibição
+        // Formatar preço, quilometragem e ano para exibição
         const price = Number(vehicleData.price);
         setPriceDisplay(formatCurrencyInput((price * 100).toString()));
         setMileageDisplay(formatMileageInput(vehicleData.mileage.toString()));
+        setYearDisplay(vehicleData.year.toString());
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
         showToast("error", "Erro ao carregar veículo");
@@ -370,10 +372,11 @@ export default function EditVehicle() {
                 </label>
                 <input
                   type="text"
-                  value={formData.year}
+                  value={yearDisplay}
                   onChange={(e) => {
                     const formatted = formatYearInput(e.target.value);
-                    if (formatted) {
+                    setYearDisplay(formatted);
+                    if (formatted && formatted.length === 4) {
                       const year = parseInt(formatted);
                       if (
                         year >= 1900 &&
