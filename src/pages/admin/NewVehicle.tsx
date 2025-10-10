@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, X, Plus, Sparkles } from "lucide-react";
-import { createVehicle, getBrands, Brand } from "../../lib/api";
+import { createVehicle, getBrands, Brand, API_URL } from "../../lib/api";
 import { getToken } from "../../lib/auth";
 import AcessorautoLogo from "../../components/AcessorautoLogo";
 import {
@@ -125,7 +125,7 @@ export default function NewVehicle() {
       };
 
       const response = await fetch(
-        "http://localhost:3001/api/ai/generate-description",
+        `${API_URL}/ai/generate-description`,
         {
           method: "POST",
           headers: {
@@ -177,7 +177,7 @@ export default function NewVehicle() {
         formData.append("images", file);
       });
 
-      const response = await fetch("http://localhost:3001/api/upload/images", {
+      const response = await fetch(`${API_URL}/upload/images`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
