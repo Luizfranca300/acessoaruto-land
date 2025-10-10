@@ -8,12 +8,12 @@ export default defineConfig({
     exclude: ["lucide-react"],
   },
   server: {
-    host: "0.0.0.0",
+    host: true, // Permite acesso de qualquer host
     port: 5173,
     strictPort: false,
   },
   preview: {
-    host: "0.0.0.0",
+    host: true, // Permite acesso de qualquer host
     port: 5173,
     strictPort: false,
   },
