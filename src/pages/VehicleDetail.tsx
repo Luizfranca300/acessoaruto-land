@@ -63,7 +63,7 @@ export default function VehicleDetail() {
       const inquiry: ContactInquiry = {
         ...formData,
         vehicle_id: id!,
-        inquiry_type: "vehicle_interest",
+        inquiry_type: "vehicle_info",
       };
 
       await createContactInquiry(inquiry);

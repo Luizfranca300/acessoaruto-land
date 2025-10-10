@@ -34,7 +34,7 @@ export type ContactInquiry = {
   phone: string;
   message: string;
   vehicle_id?: string;
-  inquiry_type: "general" | "vehicle_interest" | "valuation" | "financing";
+  inquiry_type: "general" | "vehicle_info" | "test_drive" | "financing" | "trade_in";
 };
 
 export type VehicleValuation = {
