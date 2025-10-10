@@ -35,25 +35,28 @@ export default function VehicleDetail() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   useEffect(() => {
+    async function loadVehicle() {
+      if (!id) return;
+
+      try {
+        const data = await getVehicle(id);
+        setVehicle(data);
+      } catch (error) {
+        console.error("Error loading vehicle:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     if (id) {
       loadVehicle();
     }
   }, [id]);
-
-  async function loadVehicle() {
-    if (!id) return;
-
-    try {
-      const data = await getVehicle(id);
-      setVehicle(data);
-    } catch (error) {
-      console.error("Error loading vehicle:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleSubmitInquiry(e: React.FormEvent) {
     e.preventDefault();
@@ -94,6 +97,39 @@ export default function VehicleDetail() {
         (prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length
       );
     }
+  }
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    setTouchStart(e.targetTouches[0].clientX);
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    setTouchEnd(e.targetTouches[0].clientX);
+  }
+
+  function handleTouchEnd() {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextImage();
+    }
+    if (isRightSwipe) {
+      prevImage();
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
   }
 
   if (loading) {
@@ -152,29 +188,56 @@ export default function VehicleDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-              <div className="relative aspect-video bg-gradient-to-br from-gray-200 to-gray-300">
+              <div 
+                className="relative aspect-video bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden group"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
                 {vehicle.images.length > 0 ? (
                   <>
-                    <img
-                      src={vehicle.images[currentImageIndex]}
-                      alt={`${vehicle.brands?.name} ${vehicle.model}`}
-                      className="w-full h-full object-cover"
-                    />
+                    {/* Desktop: Zoom on hover */}
+                    <div 
+                      className="hidden md:block relative w-full h-full cursor-zoom-in"
+                      onMouseMove={handleMouseMove}
+                    >
+                      <img
+                        src={vehicle.images[currentImageIndex]}
+                        alt={`${vehicle.brands?.name} ${vehicle.model}`}
+                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-150"
+                        style={{
+                          transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                        }}
+                      />
+                    </div>
+
+                    {/* Mobile: Normal view with swipe */}
+                    <div className="md:hidden relative w-full h-full">
+                      <img
+                        src={vehicle.images[currentImageIndex]}
+                        alt={`${vehicle.brands?.name} ${vehicle.model}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
                     {vehicle.images.length > 1 && (
                       <>
+                        {/* Navigation buttons - hidden on mobile, shown on desktop */}
                         <button
                           onClick={prevImage}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                          className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10"
                         >
                           <ChevronLeft size={24} />
                         </button>
                         <button
                           onClick={nextImage}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10"
                         >
                           <ChevronRight size={24} />
                         </button>
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                        
+                        {/* Image indicators */}
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                           {vehicle.images.map((_, index) => (
                             <button
                               key={index}
@@ -186,6 +249,11 @@ export default function VehicleDetail() {
                               }`}
                             />
                           ))}
+                        </div>
+
+                        {/* Mobile swipe instruction - shown briefly */}
+                        <div className="md:hidden absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full opacity-0 group-active:opacity-100 transition-opacity">
+                          Deslize para navegar
                         </div>
                       </>
                     )}
