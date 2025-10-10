@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Inventory from "./pages/Inventory";
 import VehicleDetail from "./pages/VehicleDetail";
@@ -22,6 +23,7 @@ function App() {
   return (
     <ToastProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Admin Routes - Sem Header/Footer */}
           <Route path="/admin/login" element={<Login />} />
