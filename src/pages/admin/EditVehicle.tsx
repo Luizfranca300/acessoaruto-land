@@ -9,7 +9,6 @@ import {
   parseCurrencyInput,
   formatMileageInput,
   parseMileageInput,
-  formatYearInput,
 } from "../../lib/masks";
 import { useToast } from "../../lib/toast";
 
@@ -80,7 +79,10 @@ export default function EditVehicle() {
   const [currentFeature, setCurrentFeature] = useState("");
   const [priceDisplay, setPriceDisplay] = useState("");
   const [mileageDisplay, setMileageDisplay] = useState("");
-  const [yearDisplay, setYearDisplay] = useState("");
+
+  // Gerar lista de anos (do ano atual + 1 até 1950)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear + 1 - i);
 
   useEffect(() => {
     async function fetchData() {
@@ -110,11 +112,10 @@ export default function EditVehicle() {
           is_sold: vehicleData.is_sold,
         });
 
-        // Formatar preço, quilometragem e ano para exibição
+        // Formatar preço e quilometragem para exibição
         const price = Number(vehicleData.price);
         setPriceDisplay(formatCurrencyInput((price * 100).toString()));
         setMileageDisplay(formatMileageInput(vehicleData.mileage.toString()));
-        setYearDisplay(vehicleData.year.toString());
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
         showToast("error", "Erro ao carregar veículo");
@@ -370,27 +371,21 @@ export default function EditVehicle() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Ano *
                 </label>
-                <input
-                  type="text"
-                  value={yearDisplay}
-                  onChange={(e) => {
-                    const formatted = formatYearInput(e.target.value);
-                    setYearDisplay(formatted);
-                    if (formatted && formatted.length === 4) {
-                      const year = parseInt(formatted);
-                      if (
-                        year >= 1900 &&
-                        year <= new Date().getFullYear() + 1
-                      ) {
-                        setFormData({ ...formData, year });
-                      }
-                    }
-                  }}
+                <select
+                  value={formData.year}
+                  onChange={(e) =>
+                    setFormData({ ...formData, year: parseInt(e.target.value) })
+                  }
                   required
-                  maxLength={4}
                   className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
-                  placeholder="Ex: 2024"
-                />
+                >
+                  <option value="">Selecione o ano</option>
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
