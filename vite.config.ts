@@ -11,6 +11,7 @@ export default defineConfig({
     host: true, // Permite acesso de qualquer host
     port: 5173,
     strictPort: false,
+    allowedHosts: ["acessorautoveiculos.com.br", ".acessorautoveiculos.com.br"],
   },
   preview: {
     host: true, // Permite acesso de qualquer host
