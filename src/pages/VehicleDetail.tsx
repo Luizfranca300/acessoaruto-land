@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  Share2,
 } from "lucide-react";
 import {
   getVehicle,
@@ -21,6 +22,7 @@ import {
   Vehicle,
   ContactInquiry,
 } from "../lib/api";
+import SEO from "../components/SEO";
 
 export default function VehicleDetail() {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +42,7 @@ export default function VehicleDetail() {
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [showShareMenu, setShowShareMenu] = useState(false);
 
   useEffect(() => {
     async function loadVehicle() {
@@ -150,6 +153,42 @@ export default function VehicleDetail() {
     setTouchEnd(0);
   }
 
+  function handleShare() {
+    const url = window.location.href;
+    const text = `Confira este ${vehicle?.brands?.name} ${vehicle?.model} ${vehicle?.year} na Acessorauto Veículos!`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: `${vehicle?.brands?.name} ${vehicle?.model}`,
+        text: text,
+        url: url,
+      }).catch(() => {
+        // Se o usuário cancelar, não faz nada
+      });
+    } else {
+      setShowShareMenu(true);
+    }
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copiado!');
+    setShowShareMenu(false);
+  }
+
+  function shareOnFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+    setShowShareMenu(false);
+  }
+
+  function shareOnWhatsApp() {
+    const text = encodeURIComponent(`Confira este ${vehicle?.brands?.name} ${vehicle?.model} ${vehicle?.year}!`);
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+    setShowShareMenu(false);
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -188,19 +227,80 @@ export default function VehicleDetail() {
     cvt: "CVT",
   };
 
+  const vehicleTitle = vehicle ? `${vehicle.brands?.name} ${vehicle.model} ${vehicle.year}` : 'Veículo';
+  const vehicleDescription = vehicle ? 
+    `${vehicle.brands?.name} ${vehicle.model} ${vehicle.year} - ${fuelTypeLabels[vehicle.fuel_type]} - ${vehicle.mileage.toLocaleString('pt-BR')} km - R$ ${Number(vehicle.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 
+    'Confira os detalhes deste veículo';
+  const vehicleImage = vehicle?.images?.[0] || '';
+  const vehicleUrl = window.location.href;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link
-            to="/inventory"
-            className="flex items-center gap-2 text-gray-600 hover:text-red-700 transition-colors"
-          >
-            <ArrowLeft size={20} />
-            Voltar ao Estoque
-          </Link>
+    <>
+      <SEO 
+        title={vehicleTitle}
+        description={vehicleDescription}
+        image={vehicleImage}
+        url={vehicleUrl}
+        type="article"
+      />
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <Link
+                to="/inventory"
+                className="flex items-center gap-2 text-gray-600 hover:text-red-700 transition-colors"
+              >
+                <ArrowLeft size={20} />
+                Voltar ao Estoque
+              </Link>
+              
+              <div className="relative">
+                <button
+                  onClick={handleShare}
+                  className="flex items-center gap-2 bg-red-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-800 transition-colors"
+                >
+                  <Share2 size={18} />
+                  Compartilhar
+                </button>
+
+                {showShareMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <button
+                      onClick={shareOnWhatsApp}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-2"
+                    >
+                      <MessageCircle size={18} className="text-green-600" />
+                      WhatsApp
+                    </button>
+                    <button
+                      onClick={shareOnFacebook}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-2"
+                    >
+                      <svg className="w-[18px] h-[18px] text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                      Facebook
+                    </button>
+                    <button
+                      onClick={copyLink}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-2"
+                    >
+                      <Share2 size={18} className="text-gray-600" />
+                      Copiar Link
+                    </button>
+                    <button
+                      onClick={() => setShowShareMenu(false)}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors text-gray-500 text-sm"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -558,6 +658,15 @@ export default function VehicleDetail() {
           )}
         </div>
       )}
-    </div>
+
+      {/* Overlay para fechar menu de compartilhamento */}
+      {showShareMenu && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setShowShareMenu(false)}
+        />
+      )}
+      </div>
+    </>
   );
 }

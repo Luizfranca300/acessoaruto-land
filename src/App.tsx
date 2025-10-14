@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -21,8 +22,9 @@ import { ToastProvider } from "./lib/toast";
 
 function App() {
   return (
-    <ToastProvider>
-      <BrowserRouter>
+    <HelmetProvider>
+      <ToastProvider>
+        <BrowserRouter>
         <ScrollToTop />
         <Routes>
           {/* Admin Routes - Sem Header/Footer */}
@@ -58,8 +60,9 @@ function App() {
             }
           />
         </Routes>
-      </BrowserRouter>
-    </ToastProvider>
+        </BrowserRouter>
+      </ToastProvider>
+    </HelmetProvider>
   );
 }
 
