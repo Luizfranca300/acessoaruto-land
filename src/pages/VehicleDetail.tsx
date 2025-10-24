@@ -231,7 +231,8 @@ export default function VehicleDetail() {
   const vehicleDescription = vehicle ? 
     `${vehicle.brand?.name} ${vehicle.model} ${vehicle.year} - ${fuelTypeLabels[vehicle.fuel_type]} - ${vehicle.mileage.toLocaleString('pt-BR')} km - R$ ${Number(vehicle.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 
     'Confira os detalhes deste veículo';
-  const vehicleImage = vehicle?.images?.[0] || '';
+  // Garantir que sempre tenha uma imagem válida para compartilhamento
+  const vehicleImage = vehicle?.images?.[0] || '/og-default.jpg';
   const vehicleUrl = window.location.href;
 
   return (

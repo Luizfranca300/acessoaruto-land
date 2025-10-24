@@ -17,6 +17,20 @@ export default function SEO({
 }: SEOProps) {
   const siteName = 'Acessorauto Veículos';
   const fullTitle = `${title} | ${siteName}`;
+  
+  // Garantir que a imagem seja uma URL absoluta
+  const getAbsoluteImageUrl = (imageUrl: string): string => {
+    // Se já for uma URL absoluta (http:// ou https://), retorna como está
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Se for um caminho relativo, converte para URL absoluta
+    const origin = window.location.origin;
+    return `${origin}${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
+  };
+  
+  const absoluteImageUrl = getAbsoluteImageUrl(image);
 
   return (
     <Helmet>
@@ -29,7 +43,7 @@ export default function SEO({
       <meta property="og:url" content={url} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
+      <meta property="og:image" content={absoluteImageUrl} />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content="pt_BR" />
 
@@ -38,11 +52,12 @@ export default function SEO({
       <meta name="twitter:url" content={url} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image" content={absoluteImageUrl} />
 
       {/* WhatsApp (usa Open Graph) */}
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
     </Helmet>
   );
 }
