@@ -28,7 +28,7 @@ export type Vehicle = {
   is_sold: boolean;
   created_at: string;
   updated_at: string;
-  brands?: Brand;
+  brand?: Brand;
 };
 
 export type ContactInquiry = {

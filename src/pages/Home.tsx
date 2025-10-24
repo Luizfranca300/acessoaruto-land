@@ -200,7 +200,7 @@ export default function Home() {
                     {vehicle.images.length > 0 ? (
                       <img
                         src={vehicle.images[0]}
-                        alt={`${vehicle.brands?.name} ${vehicle.model}`}
+                        alt={`${vehicle.brand?.name} ${vehicle.model}`}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -211,7 +211,7 @@ export default function Home() {
                   </div>
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      {vehicle.brands?.name} {vehicle.model}
+                      {vehicle.brand?.name} {vehicle.model}
                     </h3>
                     <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
                       <span>{vehicle.year}</span>

@@ -151,7 +151,7 @@ export default function VehiclesAdmin() {
                             {vehicle.images.length > 0 ? (
                               <img
                                 src={vehicle.images[0]}
-                                alt={`${vehicle.brands?.name} ${vehicle.model}`}
+                                alt={`${vehicle.brand?.name} ${vehicle.model}`}
                                 className="w-12 h-12 rounded-lg object-cover mr-4"
                               />
                             ) : (
@@ -163,7 +163,7 @@ export default function VehiclesAdmin() {
                             )}
                             <div>
                               <p className="text-gray-900 font-medium">
-                                {vehicle.brands?.name} {vehicle.model}
+                                {vehicle.brand?.name} {vehicle.model}
                               </p>
                               <p className="text-gray-600 text-sm">
                                 {vehicle.color} •{" "}
@@ -243,7 +243,7 @@ export default function VehiclesAdmin() {
                     {vehicle.images.length > 0 ? (
                       <img
                         src={vehicle.images[0]}
-                        alt={`${vehicle.brands?.name} ${vehicle.model}`}
+                        alt={`${vehicle.brand?.name} ${vehicle.model}`}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -274,7 +274,7 @@ export default function VehiclesAdmin() {
                   {/* Vehicle Info */}
                   <div className="p-4">
                     <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {vehicle.brands?.name} {vehicle.model}
+                      {vehicle.brand?.name} {vehicle.model}
                     </h3>
                     <p className="text-sm text-gray-600 mb-2">
                       {vehicle.year} • {vehicle.color}
@@ -356,13 +356,13 @@ export default function VehiclesAdmin() {
                   {vehicleToDelete.images.length > 0 && (
                     <img
                       src={vehicleToDelete.images[0]}
-                      alt={`${vehicleToDelete.brands?.name} ${vehicleToDelete.model}`}
+                      alt={`${vehicleToDelete.brand?.name} ${vehicleToDelete.model}`}
                       className="w-16 h-16 rounded-lg object-cover"
                     />
                   )}
                   <div>
                     <p className="font-semibold text-gray-900">
-                      {vehicleToDelete.brands?.name} {vehicleToDelete.model}
+                      {vehicleToDelete.brand?.name} {vehicleToDelete.model}
                     </p>
                     <p className="text-gray-600 text-sm">
                       Ano {vehicleToDelete.year} • {vehicleToDelete.color}

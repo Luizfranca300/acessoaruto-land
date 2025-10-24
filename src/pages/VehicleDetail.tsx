@@ -155,11 +155,11 @@ export default function VehicleDetail() {
 
   function handleShare() {
     const url = window.location.href;
-    const text = `Confira este ${vehicle?.brands?.name} ${vehicle?.model} ${vehicle?.year} na Acessorauto Veículos!`;
+    const text = `Confira este ${vehicle?.brand?.name} ${vehicle?.model} ${vehicle?.year} na Acessorauto Veículos!`;
 
     if (navigator.share) {
       navigator.share({
-        title: `${vehicle?.brands?.name} ${vehicle?.model}`,
+        title: `${vehicle?.brand?.name} ${vehicle?.model}`,
         text: text,
         url: url,
       }).catch(() => {
@@ -183,7 +183,7 @@ export default function VehicleDetail() {
   }
 
   function shareOnWhatsApp() {
-    const text = encodeURIComponent(`Confira este ${vehicle?.brands?.name} ${vehicle?.model} ${vehicle?.year}!`);
+    const text = encodeURIComponent(`Confira este ${vehicle?.brand?.name} ${vehicle?.model} ${vehicle?.year}!`);
     const url = encodeURIComponent(window.location.href);
     window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
     setShowShareMenu(false);
@@ -227,9 +227,9 @@ export default function VehicleDetail() {
     cvt: "CVT",
   };
 
-  const vehicleTitle = vehicle ? `${vehicle.brands?.name} ${vehicle.model} ${vehicle.year}` : 'Veículo';
+  const vehicleTitle = vehicle ? `${vehicle.brand?.name} ${vehicle.model} ${vehicle.year}` : 'Veículo';
   const vehicleDescription = vehicle ? 
-    `${vehicle.brands?.name} ${vehicle.model} ${vehicle.year} - ${fuelTypeLabels[vehicle.fuel_type]} - ${vehicle.mileage.toLocaleString('pt-BR')} km - R$ ${Number(vehicle.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 
+    `${vehicle.brand?.name} ${vehicle.model} ${vehicle.year} - ${fuelTypeLabels[vehicle.fuel_type]} - ${vehicle.mileage.toLocaleString('pt-BR')} km - R$ ${Number(vehicle.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 
     'Confira os detalhes deste veículo';
   const vehicleImage = vehicle?.images?.[0] || '';
   const vehicleUrl = window.location.href;
@@ -321,7 +321,7 @@ export default function VehicleDetail() {
                     >
                       <img
                         src={vehicle.images[currentImageIndex]}
-                        alt={`${vehicle.brands?.name} ${vehicle.model}`}
+                        alt={`${vehicle.brand?.name} ${vehicle.model}`}
                         className="w-full h-full object-cover"
                       />
                       {/* Indicador de clique */}
@@ -375,7 +375,7 @@ export default function VehicleDetail() {
 
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                {vehicle.brands?.name} {vehicle.model}
+                {vehicle.brand?.name} {vehicle.model}
               </h1>
               <p className="text-4xl font-bold text-red-700 mb-6">
                 R${" "}
@@ -483,7 +483,7 @@ export default function VehicleDetail() {
                 </a>
                 <a
                   href={`https://wa.me/5534999989303?text=${encodeURIComponent(
-                    `Olá! Tenho interesse no veículo ${vehicle.brands?.name || ''} ${vehicle.model} ${vehicle.year}`
+                    `Olá! Tenho interesse no veículo ${vehicle.brand?.name || ''} ${vehicle.model} ${vehicle.year}`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -621,7 +621,7 @@ export default function VehicleDetail() {
           >
             <img
               src={vehicle.images[lightboxIndex]}
-              alt={`${vehicle.brands?.name} ${vehicle.model}`}
+              alt={`${vehicle.brand?.name} ${vehicle.model}`}
               className="max-w-full max-h-full object-contain"
             />
           </div>
